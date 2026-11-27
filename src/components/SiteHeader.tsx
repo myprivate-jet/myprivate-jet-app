@@ -3,15 +3,10 @@ import { getDict } from "@/i18n/server";
 import { NavLinks } from "./NavLinks";
 import { LocaleSwitcher } from "./LocaleSwitcher";
 
-export async function SiteHeader({ member }: { member: boolean }) {
+export async function SiteHeader({ member: _member }: { member: boolean }) {
   const { t, locale } = await getDict();
-  const links = [
-    { href: "/", label: t.nav.plan },
-    { href: "/standards", label: t.nav.standards },
-    { href: "/guides", label: t.nav.guides },
-    { href: "/office", label: t.nav.office },
-    ...(member ? [{ href: "/office/profile", label: t.nav.profile }] : []),
-  ];
+  // One destination in the header. Standards and guides live in the footer, where search engines still find them.
+  const links = [{ href: "/office", label: t.nav.office }];
   return (
     <header className="top">
       <div className="brand">

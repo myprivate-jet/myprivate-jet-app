@@ -13,6 +13,9 @@ export function airport(icao: string): Airport | undefined {
 
 const norm = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
+/** Airports our clients actually use: they win ties, so "Gene" finds Geneva before Geneina. */
+const KEY = new Set("LSGG LSZH LSGS LFMN LFMD LFTH LFPB LFPG LFLJ LFLB LFLS LFKJ LFKB EGLF EGGW EGKB EGLC EGLL EGSS EGPH EHAM EBBR EDDM EDDF EDDB LOWW LOWS LIML LIMC LIRA LIRQ LIEO LICJ LIPZ LEMD LEBL LEIB LEPA LEMG LPPT LPFR LGAV LGMK LGSR LMML OMDB OMDW OMAA OERK OTHH LTFM LTBS LTFE KTEB KJFK KVNY KLAS KASE KPBI KMIA KHPN TNCM TFFJ LCLK LSZS LFMH LFKC".split(" "));
+
 /** Ranked search for the airport picker: codes first, then city, then name. */
 export function searchAirports(q: string, limit = 8): Airport[] {
   const n = norm(q.trim());
@@ -27,6 +30,8 @@ export function searchAirports(q: string, limit = 8): Airport[] {
     if (s) {
       // Prefer airports with an IATA code (larger, jet-capable) at equal match.
       if (a[1]) s += 5;
+      if (KEY.has(a[0])) s += 15;
+      if (norm(a[3]) === n) s += 8;
       scored.push([s, a]);
     }
   }

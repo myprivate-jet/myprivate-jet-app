@@ -19,10 +19,8 @@ export default async function Home() {
           description: "One recommended cabin standard and one final, all-inclusive price. Free membership; a Dedicated Advisor arranges the flight with audited operators.",
         }}
       />
-      <p className="hero-q">{t.heroQ}</p>
       <PlanFlight
         member={Boolean(member)}
-        initial={{ from: "LSGG", to: "LFMN", fromLabel: "Geneva", toLabel: "Nice" }}
         guestNote={{ guest: t.guest, open: t.openOffice, demo: t.demo, promise: t.promise }}
       />
     </>

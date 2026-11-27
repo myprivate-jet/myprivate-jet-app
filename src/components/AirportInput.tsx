@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 export type AirportHit = { icao: string; iata: string; name: string; city: string; country: string };
 
 /** Airport picker inside the brief sentence. Search runs on the server. */
-export function AirportInput({ id, label, value, display, onPick }: { id: string; label: string; value: string | null; display: string; onPick: (a: AirportHit | null) => void }) {
+export function AirportInput({ id, label, value, display, onPick, placeholder, autoFocus, className }: { id: string; label: string; value: string | null; display: string; onPick: (a: AirportHit | null) => void; placeholder?: string; autoFocus?: boolean; className?: string }) {
   const [text, setText] = useState(display);
   const [hits, setHits] = useState<AirportHit[]>([]);
   const [idx, setIdx] = useState(-1);
@@ -29,7 +29,7 @@ export function AirportInput({ id, label, value, display, onPick }: { id: string
   const pick = (a: AirportHit) => { setText(a.city || a.name); setHits([]); setOpen(false); onPick(a); };
 
   return (
-    <span className="slot">
+    <span className={`slot ${className ?? ""}`}>
       <input
         id={id}
         aria-label={label}
@@ -38,6 +38,10 @@ export function AirportInput({ id, label, value, display, onPick }: { id: string
         aria-controls={`${id}-ac`}
         aria-autocomplete="list"
         value={text}
+        placeholder={placeholder}
+        autoFocus={autoFocus}
+        enterKeyHint="next"
+        spellCheck={false}
         title={value ?? undefined}
         onChange={(e) => { setText(e.target.value); if (value) onPick(null); search(e.target.value); }}
         onKeyDown={(e) => {
