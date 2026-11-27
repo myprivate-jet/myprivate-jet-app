@@ -82,7 +82,7 @@ export const bookings = pgTable("bookings", {
   /** Whole currency units. Null while the advisor prices it personally. */
   price: integer("price"),
   currency: text("currency").$type<"EUR" | "USD">().notNull(),
-  guarantee: text("guarantee").$type<"estimate" | "instant" | "with-aircraft">().notNull(),
+  guarantee: text("guarantee").$type<"firm" | "estimate" | "instant" | "with-aircraft">().notNull(),
   /** Private members: the estimate shown when they asked. Never binding. */
   estimate: integer("estimate"),
   /** When the client accepted the final price (Assured: at booking). From then on the price is fixed. */

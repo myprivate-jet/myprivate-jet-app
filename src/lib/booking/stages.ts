@@ -20,7 +20,7 @@ export const STAGE_DESCRIPTIONS: Record<StageKey, string> = {
   req: "Received in the app. Profile, preferences and travellers attached automatically.",
   price: "Assured Price computed (P90 of comparable trips) and eligibility screened.",
   book: "Client pressed Book. Mandate on file, so no signature is needed from the client.",
-  src: "RFQ sent automatically to operators qualified for this standard, with our Assured Price as the cost ceiling: audit on file, aircraft 15 years or newer, crew qualified for the airports. Offers ranked on arrival.",
+  src: "RFQ sent automatically to operators qualified for this standard, with our Assured Price as the cost ceiling: audit on file, aircraft age per membership (Assured: under 7 years or refurbished in the last 2; Private: any suitable aircraft), crew qualified for the airports. Offers ranked on arrival.",
   ac: "Advisor picks the aircraft. The system pre-selects the best audited offer under the cost cap.",
   agr: "Charter agreement generated from the operator's terms and e-signed under the client's mandate the moment an offer is chosen.",
   pin: "Payment link sent automatically. Bank feed reconciles the transfer; reminder at T-7 days.",

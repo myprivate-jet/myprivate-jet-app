@@ -115,8 +115,9 @@ export async function bookFlight(req: TripRequest): Promise<Result<{ ref: string
   if (!q) return { ok: false, error: "Please choose both airports." };
   const std = q.shown ?? q.advisorStandard ?? "large";
   const computed = q.shown ? q.standards[q.shown].price : null;
-  // Assured: the price on screen is the price, accepted by booking. Private: an estimate; the advisor sends the final price.
-  const assured = q.tier === "assured" && computed != null;
+  // No one waits (Pascal, 2026-11-27): every member's price on screen is firm and booking accepts it.
+  // Only a standard the model cannot price automatically still goes to the advisor for one final price.
+  const assured = computed != null;
   const priced = assured ? computed : null;
   const payBy = addDays(q.trip.date, -5) < todayISO() ? todayISO() : addDays(q.trip.date, -5);
   const ref = newRef();
@@ -133,9 +134,9 @@ export async function bookFlight(req: TripRequest): Promise<Result<{ ref: string
       needsAdvisor: assured ? "Choose the aircraft" : "Send the final price",
       sla: `Within ${CONFIRM_HOURS} h of the request`,
       flags: [
-        assured ? "Assured member: price guaranteed" : "Private member: estimate only",
+        q.guarantee === "instant" ? "Assured member: price and aircraft guaranteed" : priced != null ? "Firm price accepted; aircraft subject to availability" : "Advisor to price this standard",
         q.event ? `Peak: ${q.event}` : null,
-        q.guarantee === "with-aircraft" ? `Inside ${q.notice} h notice: confirm price with the aircraft` : null,
+        q.tier === "assured" && q.guarantee === "firm" ? `Inside ${q.notice} h notice: aircraft not guaranteed` : null,
         parsed.data.bags !== "std" ? `Luggage: ${parsed.data.bags}` : null,
         parsed.data.pets ? "Pets in cabin" : null,
       ].filter(Boolean) as string[],
@@ -145,7 +146,7 @@ export async function bookFlight(req: TripRequest): Promise<Result<{ ref: string
   await db().insert(operatorMessages).values({
     bookingId: b.id, direction: "out", fromName: "MyPrivate-Jet Ops", toName: "Qualified operators", label: "Booked + 2 min",
     subject: `RFQ ${ref} · ${b.fromIcao}–${b.toIcao} · ${b.date} · ${b.pax} pax`,
-    body: `Request for quote. ${b.fromIcao}–${b.toIcao}, ${b.date} ${b.time} local, ${b.pax} passengers. Audited operators only, aircraft 2011 or newer. Price ceiling applies.`,
+    body: `Request for quote. ${b.fromIcao}–${b.toIcao}, ${b.date} ${b.time} local, ${b.pax} passengers. Audited operators only${m.tier === "assured" ? ", aircraft built in the last 7 years or refurbished in the last 2" : ", any suitable aircraft"}. Price ceiling applies.`,
     aiNote: "Prepared automatically. Operator email is not connected yet, so nothing was sent.", status: "queued",
   });
   // Until operator RFQs are connected, sample offers keep the advisor flow testable.

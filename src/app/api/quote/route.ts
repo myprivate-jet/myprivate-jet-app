@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { quoteFor, tripSchema } from "@/lib/pricing/quote";
 import { currentMember } from "@/server/auth/session";
 
-/** One recommendation and one price: an estimate for guests and Private members, guaranteed for Assured. No ranges, no operator data. */
+/** One recommendation and one price: firm for everyone; for Assured, the aircraft is guaranteed too. No ranges, no operator data. */
 export async function POST(req: Request) {
   const parsed = tripSchema.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Please check the trip details." }, { status: 400 });

@@ -14,13 +14,13 @@ export function MembershipCard({ tier, requested, demo = false, holder }: { tier
   const L = LEVELS[tier];
   return (
     <div className={`level ${tier}`}>
-      <div className="lv-h"><span className="lv-badge">{L.name}</span>{tier === "assured" ? "Your prices are guaranteed." : "Estimates first, then one final price."}</div>
+      <div className="lv-h"><span className="lv-badge">{L.name}</span>{tier === "assured" ? "Your aircraft and prices are guaranteed." : "Today's price at once. Aircraft subject to availability."}</div>
       {tier === "private" && (
         asked ? (
           <p className="lv-p">You asked to become Assured. Your advisor will confirm the details with you.</p>
         ) : (
           <>
-            <p className="lv-p">Upgrade to Assured ({LEVELS.assured.price}): your prices guaranteed and booked in one tap, any day of the year.</p>
+            <p className="lv-p">Upgrade to Assured ({LEVELS.assured.price}): newer aircraft, guaranteed, and prices fixed for 12 months, any day of the year.</p>
             <div className="lv-a">
               <button className="mini" type="button" disabled={pending} onClick={() => start(async () => { if (!demo) { await requestAssured(); router.refresh(); } setAsked(true); })}>Become Assured</button>
               <Link href="/membership" className="so">How it works</Link>

@@ -19,7 +19,7 @@ export function nextAction(flights: ClientFlight[], today = new Date()): NextAct
   if (soon) return { kind: "pax", f: soon, title: `Add your guests for ${route(soon)}`, line: `Names and a photo of each passport, read automatically. Needed by 24 hours before departure.` };
   const first = flights[0];
   if (!first) return { kind: "plan", title: "Where would you like to go?", line: "Four taps to a recommended cabin and a price. Your advisor takes it from there." };
-  if (first.priceState === "estimate") return { kind: "wait", f: first, title: "Nothing to do. Your final price is on its way.", line: `Your advisor sends one final price for ${route(first)} within 2 hours of your request.` };
+  if (first.priceState === "estimate") return { kind: "wait", f: first, title: "Nothing to do. Your advisor is pricing this trip personally.", line: `${route(first)} is priced by hand: one firm price within 2 hours, to accept with one tap.` };
   if (first.steps.ac !== "done") return { kind: "wait", f: first, title: "Nothing to do. We are confirming your aircraft.", line: `${route(first)}: aircraft and crew confirmed within 2 hours. We tell you as soon as it is done.` };
   return { kind: "wait", f: first, title: "Nothing to do. Everything is in hand.", line: `Next: your flight brief for ${route(first)} arrives 2 days before you fly.` };
 }

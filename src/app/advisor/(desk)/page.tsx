@@ -90,7 +90,10 @@ function Overview({ d }: { d: D }) {
   const b = d.booking;
   const std = (b.upgradedTo ?? b.standard) as StandardId;
   const cap = b.price ?? 0;
-  const ok = d.offers.filter((o) => o.audited && o.year >= 2011 && o.cost <= cap).sort((x, y) => x.cost - y.cost);
+  // Assured: aircraft built in the last 7 years (or refurbished in the last 2: check the offer). Private: no age limit.
+  const assuredAge = d.member.tier === "assured";
+  const minYear = assuredAge ? new Date().getFullYear() - 7 : 0;
+  const ok = d.offers.filter((o) => o.audited && o.year >= minYear && o.cost <= cap).sort((x, y) => x.cost - y.cost);
   const pick = ok[0];
   const chosen = d.offers.find((o) => o.status === "chosen");
   const out = chosen?.cost ?? pick?.cost ?? 0;
@@ -133,7 +136,7 @@ function Overview({ d }: { d: D }) {
             </table>
           </div>
         )}
-        {d.offers.length > 0 && <p className="fine">Suggestion rule: lowest cost with an audit on file, aircraft from 2011 or newer, crew qualified for both airports, and at or below the Assured Price ({money(cap, b.currency)}). We absorb nothing.</p>}
+        {d.offers.length > 0 && <p className="fine">Suggestion rule: lowest cost with an audit on file, {assuredAge ? "aircraft built in the last 7 years or refurbished in the last 2 (Assured)" : "any suitable aircraft (Private, no age limit)"}, crew qualified for both airports, and at or below the Assured Price ({money(cap, b.currency)}). We absorb nothing.</p>}
         {exception && nextStd && cheapest && (
           <ExceptionPanel
             refId={b.ref}

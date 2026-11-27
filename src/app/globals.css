@@ -721,3 +721,70 @@ footer{border-top:0;margin-top:120px;text-align:center}
 .hint{margin:-12px 0 24px}
 header.top{flex-wrap:nowrap}
 @media (max-width:480px){.brand{font-size:18px}.nav a{padding:8px 12px;font-size:13px}.lang{font-size:12px;max-width:74px}.hdr-r{gap:8px}}
+
+/* =====================================================================
+   Luxury finish 2026-11-27: same one-action screens, richer materials.
+   A fine serif for questions and prices, lacquered navy price cards,
+   champagne hairlines, warm paper with a faint grain.
+   ===================================================================== */
+:root{--lux:var(--font-lux),"Cormorant Garamond","Cormorant",Didot,"Bodoni 72",Georgia,serif;
+  --champ:#c9a96a;--champ-hi:#ecd9a8;--lacquer:#0c1222;
+  --hair:rgba(154,118,48,.28);
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.38 0 0 0 0 0.25 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+body{background-color:var(--ivory);background-image:var(--grain),radial-gradient(120% 60% at 50% -10%,rgba(201,169,106,.13),transparent 60%);background-attachment:fixed}
+.brand{font-family:var(--lux);font-weight:600;font-size:25px;letter-spacing:.005em}
+.qh{font-family:var(--lux);font-weight:500;font-size:clamp(54px,11vw,92px);line-height:.95;letter-spacing:-.02em}
+.hint{font-size:15px}
+.prog span{height:2px;background:var(--hair)}
+.prog span.on{background:linear-gradient(90deg,var(--gold),var(--champ))}
+.trail button{background:transparent;box-shadow:inset 0 0 0 1px var(--hair);font-weight:500}
+.choices button,.choices .pickdate{box-shadow:inset 0 0 0 1px var(--hair),0 10px 30px rgba(14,21,38,.05);transition:box-shadow .2s,transform .12s}
+.choices button:hover{box-shadow:inset 0 0 0 1px var(--champ),0 14px 36px rgba(14,21,38,.08)}
+.choices .on,.seg .on{background:var(--lacquer);color:#f4efe2;box-shadow:inset 0 0 0 1px rgba(201,169,106,.5)}
+.choices .on small,.seg .on small{color:var(--champ-hi)}
+.big-in input{box-shadow:inset 0 0 0 1px var(--hair),0 14px 44px rgba(14,21,38,.06);font-family:var(--lux);font-weight:500;font-size:clamp(26px,5vw,32px)}
+.go{background:linear-gradient(180deg,#18213a,var(--lacquer));color:#f6f0e2;box-shadow:inset 0 0 0 1px rgba(201,169,106,.45),0 12px 30px rgba(12,18,34,.22);letter-spacing:.01em}
+.go:hover{box-shadow:inset 0 0 0 1px var(--champ),0 16px 36px rgba(12,18,34,.28)}
+
+/* Every price sits on lacquer. Private: silver hairline. Assured: gold. */
+.card-a{position:relative;overflow:hidden;color:#f4efe2;border-radius:30px;
+  background:radial-gradient(140% 90% at 0% 0%,#24304d 0%,#121a2e 45%,#0a0f1d 100%);
+  box-shadow:0 34px 80px rgba(8,12,24,.30),inset 0 0 0 1px rgba(220,226,236,.16)}
+.card-a::before{content:"";position:absolute;inset:0;background:var(--grain);opacity:.6;pointer-events:none}
+.card-a::after{content:"";position:absolute;left:28px;right:28px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(236,217,168,.55),transparent)}
+.card-a>*{position:relative}
+.card-a .eyebrow{color:#c9ced8}
+.card-a .std{font-family:var(--lux);font-weight:500;font-size:30px;letter-spacing:0;color:#f7f3ea}
+.card-a .big{font-family:var(--lux);font-weight:500;font-size:clamp(68px,16vw,112px);letter-spacing:-.02em;color:#f7f3ea}
+.card-a .final,.card-a .why,.card-a .next,.card-a .talk{color:rgba(244,239,226,.72)}
+.card-a .next li span{background:transparent;box-shadow:inset 0 0 0 1px rgba(244,239,226,.3);color:#f4efe2}
+.card-a .go{background:linear-gradient(180deg,#fbf6ea,#eadfc6);color:#0c1222;box-shadow:0 10px 26px rgba(0,0,0,.25)}
+.card-a .talk:hover{color:#fff}
+.card-a .cmp{margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(244,239,226,.12);font-size:13.5px;color:rgba(244,239,226,.6)}
+.card-a .cmp b{color:#f4efe2;font-weight:600}
+.card-a.is-assured{background:radial-gradient(140% 90% at 100% 0%,#2a2416 0%,#14120d 40%,#07080c 100%);
+  box-shadow:0 34px 90px rgba(0,0,0,.38),inset 0 0 0 1px rgba(201,169,106,.5)}
+.card-a.is-assured::after{background:linear-gradient(90deg,transparent,var(--champ-hi),transparent)}
+.card-a.is-assured .eyebrow{color:var(--champ)}
+.card-a.is-assured .big{background:linear-gradient(180deg,#f6e7bf 0%,#d9b670 55%,#b8924a 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.card-a.is-assured .go{background:linear-gradient(180deg,#f3e2b4,#c9a35b);color:#14110a}
+
+.upsell{box-shadow:inset 0 0 0 1px var(--hair),var(--lift)}
+.upsell b{font-family:var(--lux);font-weight:600;font-size:21px}
+.promise-line span::before{color:var(--champ)}
+.manifesto p:first-child{font-family:var(--lux);font-weight:500;font-size:clamp(28px,5vw,36px);line-height:1.1}
+.nextup{background:radial-gradient(140% 90% at 0% 0%,#24304d 0%,#121a2e 45%,#0a0f1d 100%);box-shadow:0 24px 60px rgba(8,12,24,.25),inset 0 0 0 1px rgba(201,169,106,.3)}
+.nextup .nu-t,.oh{font-family:var(--lux);font-weight:500;letter-spacing:-.01em}
+.oh{font-size:clamp(40px,8vw,60px)}
+
+/* Membership levels: two materials, side by side */
+.lvl{box-shadow:inset 0 0 0 1px var(--hair),var(--lift)}
+.lvl h2,.lvl .lv-h{font-family:var(--lux);font-weight:500}
+.lvl.assured,.lvl.is-assured{background:radial-gradient(140% 90% at 100% 0%,#2a2416 0%,#14120d 40%,#07080c 100%);color:#efe7d4;box-shadow:inset 0 0 0 1px rgba(201,169,106,.5),0 30px 70px rgba(0,0,0,.3)}
+.lvl-p{font-family:var(--lux);font-weight:500;letter-spacing:-.01em;font-size:clamp(40px,6vw,54px)}
+.lvl.assured .lvl-p{background:linear-gradient(180deg,#f6e7bf,#c9a35b);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lvl.assured .lvl-n{color:var(--champ)}
+.lvl.assured .go{background:linear-gradient(180deg,#f3e2b4,#c9a35b);color:#14110a}
+@media (max-width:480px){.brand{font-size:21px}}
+main h1,.page h1,.prose h1,main h2,.prose h2{font-family:var(--lux);font-weight:500;letter-spacing:-.01em}
+main h1,.page h1,.prose h1{font-size:clamp(44px,8vw,72px);line-height:1}

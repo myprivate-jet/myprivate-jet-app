@@ -4,7 +4,7 @@ import { CtaBand } from "@/components/CtaBand";
 import { BOOKING_TERMS } from "@/lib/booking/terms";
 import { MODEL_INFO } from "@/lib/pricing/engine";
 
-export const metadata: Metadata = { title: "The Assured Price", description: "One recommended cabin and one all-inclusive price: an estimate for Private members, guaranteed for Assured members. Nothing payable until the aircraft is confirmed.", alternates: { canonical: "/assured-price" } };
+export const metadata: Metadata = { title: "The Assured Price", description: "One recommended cabin and one all-inclusive price: firm at once for every member, booked in one tap. Nothing payable until the aircraft is confirmed.", alternates: { canonical: "/assured-price" } };
 
 export default function AssuredPrice() {
   return (
@@ -17,7 +17,7 @@ export default function AssuredPrice() {
         <dt>One final price</dt><dd>Aircraft, crew, positioning, fees and catering included. It never moves once the aircraft is confirmed.</dd>
         <dt>Never a downgrade</dt><dd>If the operator cannot fly, a replacement of the same standard or higher, at our cost.</dd>
         <dt>Nothing to pay first</dt><dd>No deposit and no hours to buy. You pay once the aircraft is confirmed.</dd>
-        <dt>Estimate or guarantee</dt><dd>Private members (free) see an estimate, then one final price within 2 hours. Assured members see a guaranteed price and book in one tap. <a href="/membership">The two memberships</a>.</dd>
+        <dt>Private or Assured</dt><dd>Every member sees a firm price at once and books in one tap. Private (free): today's price, any suitable aircraft, subject to availability. Assured: newer aircraft guaranteed, prices fixed for 12 months. <a href="/membership">The two memberships</a>.</dd>
         <dt>One advisor</dt><dd>Your Dedicated Advisor, from the first question to landing.</dd>
       </dl>
       <h2>The booking terms, in plain words</h2>

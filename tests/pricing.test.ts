@@ -43,19 +43,19 @@ describe("recommendation and screening", () => {
     expect(q.advisorStandard).not.toBeNull();
     expect(JSON.stringify(q)).not.toContain("quantiles");
   });
-  it("shows guests and Private members an estimate, never a guarantee", () => {
+  it("gives guests and Private members a firm price at once, aircraft subject to availability", () => {
     const early = new Date("2027-01-10T09:00:00Z");
-    expect(quote(trip("LSGG", "LFMN"), null, early).guarantee).toBe("estimate");
-    expect(quote(trip("LSGG", "LFMN"), null, early, "private").guarantee).toBe("estimate");
+    expect(quote(trip("LSGG", "LFMN"), null, early).guarantee).toBe("firm");
+    expect(quote(trip("LSGG", "LFMN"), null, early, "private").guarantee).toBe("firm");
   });
   it("guarantees the Assured price any day, peak dates included, outside the notice period", () => {
     // 11 June 2027 is in the peak calendar; Assured is still guaranteed.
     expect(quote(trip("LSGG", "LFMN"), null, new Date("2027-06-08T09:00:00Z"), "assured").guarantee).toBe("instant");
-    // Inside 72 hours in Europe: confirmed with the aircraft.
-    expect(quote(trip("LSGG", "LFMN"), null, new Date("2027-06-09T09:00:00Z"), "assured").guarantee).toBe("with-aircraft");
+    // Inside 72 hours in Europe: still a firm price, but the aircraft is subject to availability.
+    expect(quote(trip("LSGG", "LFMN"), null, new Date("2027-06-09T09:00:00Z"), "assured").guarantee).toBe("firm");
     // Outside Europe the notice is 96 hours.
     const us = quote(trip("KTEB", "KPBI"), null, new Date("2027-06-07T20:00:00Z"), "assured");
     expect(us.notice).toBe(96);
-    expect(us.guarantee).toBe("with-aircraft");
+    expect(us.guarantee).toBe("firm");
   });
 });

@@ -16,7 +16,7 @@ function stepSub(x: ClientFlight, k: ClientStepKey, st: StepState) {
   const P = priceText(x);
   switch (k) {
     case "book":
-      if (x.priceState === "fixed") return x.guarantee === "estimate" ? "You accepted this price. It is fixed." : "Your Assured Price. It is fixed.";
+      if (x.priceState === "fixed") return x.guarantee === "instant" ? "Your Assured Price, aircraft guaranteed. It is fixed." : x.guarantee === "firm" ? "Booked at this price. It is fixed." : "You accepted this price. It is fixed.";
       if (x.priceState === "offered") return x.declined ? "You declined this price. Your advisor will be in touch; nothing is owed." : `Your final price: ${money(x.price!, x.currency)}, all-inclusive. Accept it with one tap.`;
       return x.estimate != null ? `Estimated at ${money(x.estimate, x.currency)}. Your advisor sends one final price within 2 hours.` : "Your advisor sends one final price within 2 hours.";
     case "ac": return st === "done" ? `${x.aircraft ?? "Aircraft"}. Registration, operator and crew on file.` : st === "now" ? "We confirm within 2 hours. If this standard isn't available at your price, you choose with one tap. Nothing is payable before." : "Within 2 hours of booking.";

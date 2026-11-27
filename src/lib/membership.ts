@@ -12,27 +12,31 @@ export const FEE_BACK = {
   text: "If, on any request made with the required notice, we cannot fly you in your standard at your Assured Price, your whole annual fee is refunded: in money, not as a credit. And we still find you an aircraft, at one new price you are free to decline.",
 };
 
+/**
+ * Both levels get a firm price at once and book in one tap: no one waits (decided 2026-11-27).
+ * The difference is what is guaranteed: the aircraft, its age, and whether the price moves with the calendar.
+ */
 export const LEVELS = {
   private: {
     name: "Private",
     price: "Free",
-    line: "An honest estimate at once, then one final price from your advisor within 2 hours.",
+    line: "Today's price, at once. Book in one tap. Any suitable aircraft, subject to availability.",
     points: [
-      "The recommended cabin and what to know about your trip, instantly",
-      "An estimated all-inclusive price, clearly marked as an estimate",
-      "One final price from your Dedicated Advisor within 2 hours",
-      "Accept with one tap: from then on the price is fixed",
-      "Nothing to pay until the aircraft is confirmed",
+      "A firm, all-inclusive price on screen at once: no estimate, no waiting",
+      "Book in one tap; we confirm your aircraft within 2 hours",
+      "Any suitable aircraft in your cabin, from audited operators, subject to availability",
+      "Today's price: it moves with the date and with peak days",
+      "Nothing to pay until everything is confirmed",
     ],
   },
   assured: {
     name: "Assured",
     price: ASSURED_FEE.label,
-    line: "The price you see is the price you pay. Book in one tap, any day of the year.",
+    line: "Your aircraft guaranteed, your prices fixed for 12 months, any day of the year.",
     points: [
-      "The price on screen is guaranteed, not an estimate",
-      "Prices fixed for 12 months, peak dates included",
-      "Book in one tap with 72 hours' notice in Europe (96 hours elsewhere)",
+      "Newer aircraft: built in the last 7 years, or refurbished in the last 2",
+      "The aircraft is guaranteed with 72 hours' notice in Europe (96 hours elsewhere)",
+      "Prices fixed for 12 months, peak days included",
       "If we ever fail you, the whole year's fee comes back",
       "A 24/7 line to your Dedicated Advisor",
     ],

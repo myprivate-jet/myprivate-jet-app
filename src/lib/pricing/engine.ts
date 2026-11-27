@@ -15,11 +15,14 @@ export const CONFIRM_HOURS = 2;
 const ASSURED_Q = 3; // resq index 3 = P90
 /**
  * Two membership levels (decided 2026-11-27).
- * Private (free): the price on screen is an estimate; the advisor sends one final price within CONFIRM_HOURS.
- * Assured (annual fee): the price on screen is guaranteed, any day including peak dates, with this much notice.
+ * No one waits (2026-11-27): every member gets a firm price at once and books in one tap.
+ * Private (free): today's price, which moves with dates and peaks; the aircraft is subject to availability
+ *   (we search the whole category; nothing is payable until it is confirmed).
+ * Assured (annual fee): prices fixed for 12 months, peak dates included, and the aircraft guaranteed with this much notice.
+ * "estimate" is kept only for bookings made before this change.
  */
 export type Tier = "guest" | "private" | "assured";
-export type Guarantee = "estimate" | "instant" | "with-aircraft";
+export type Guarantee = "firm" | "instant" | "with-aircraft" | "estimate";
 export const ASSURED_NOTICE_HOURS = { europe: 72, elsewhere: 96 } as const;
 
 const EU = new Set("AL AD AT BA BE BG BY CH CY CZ DE DK EE ES FI FO FR GB GG GI GR HR HU IE IM IS IT JE LI LT LU LV MC MD ME MK MT NL NO PL PT RO RS SE SI SK SM UA VA XK TR".split(" "));
@@ -210,13 +213,13 @@ export const assuredNotice = (t: Pick<Trip, "route">) => (t.route === "EU" ? ASS
 
 /**
  * What the price on screen means.
- * Guests and Private members see an estimate. Assured members see a guaranteed price,
- * except inside the notice period, where the price is confirmed together with the aircraft.
+ * Everyone sees a firm price they can book at once. Assured members, with the required notice,
+ * also have the aircraft guaranteed ("instant"); otherwise the aircraft is subject to availability ("firm").
  */
 export function guarantee(t: Trip, tier: Tier, now = new Date()): Guarantee {
-  if (tier !== "assured") return "estimate";
+  if (tier !== "assured") return "firm";
   const hoursAway = (new Date(`${t.date}T${t.time || "12:00"}:00`).getTime() - now.getTime()) / 36e5;
-  return hoursAway < assuredNotice(t) ? "with-aircraft" : "instant";
+  return hoursAway < assuredNotice(t) ? "firm" : "instant";
 }
 
 export interface QuoteResult {

@@ -10,7 +10,7 @@ import { currentMember } from "@/server/auth/session";
 
 export const metadata: Metadata = {
   title: "Membership: Private and Assured",
-  description: "Private membership is free: an estimate at once, then one final price within 2 hours. Assured membership makes the price on screen guaranteed, any day, booked in one tap.",
+  description: "Both levels give a firm price at once, booked in one tap. Private is free: today's price, any suitable aircraft, subject to availability. Assured guarantees newer aircraft and fixes prices for 12 months, any day, booked in one tap.",
   alternates: { canonical: "/membership" },
 };
 
@@ -27,7 +27,7 @@ export default async function Membership() {
       }} />
       <Crumbs items={[["/", "Home"], ["/membership", "Membership"]]} />
       <h1>Above the rest. By design.</h1>
-      <p className="lede">Someone will always fly for less. We are not that company. We do not run auctions or forward you the cheapest bid: we recommend one cabin, fly it with audited operators, and put one advisor on your side from the first question to landing. Two memberships; the difference is when the price becomes a promise.</p>
+      <p className="lede">Someone will always fly for less. We are not that company. We do not run auctions or forward you the cheapest bid: we recommend one cabin, fly it with audited operators, and put one advisor on your side from the first question to landing. Two memberships. Both give you a firm price at once and no waiting; Assured adds a newer aircraft, guaranteed, at prices fixed all year.</p>
       <div className="levels">
         {(["private", "assured"] as const).map((k) => {
           const L = LEVELS[k];
@@ -52,7 +52,7 @@ export default async function Membership() {
       <h2>The fee-back promise</h2>
       <p>{FEE_BACK.text}</p>
       <h2>In one example</h2>
-      <p>Four guests, Geneva to Nice on a Friday in June. A Private member sees the price at once, marked as an estimate, and receives the final price from their advisor within 2 hours, then accepts it with one tap. An Assured member sees the same figure marked as guaranteed and books it on the spot, even on Grand Prix weekend.</p>
+      <p>Four guests, Geneva to Nice on a Friday in June. Both members see a firm price at once and book it with one tap. The Private member pays that day's price, which is higher on Grand Prix weekend, and we find the aircraft among every suitable aircraft in the cabin. The Assured member pays the price fixed for the year, peak weekend or not, in a newer aircraft that is guaranteed.</p>
       <p className="fine">Membership Terms, including the fee-back promise, are pending legal review.</p>
     </div>
   );

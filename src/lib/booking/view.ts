@@ -22,7 +22,7 @@ export interface ClientFlight {
   keep: boolean;
   note: string | null;
   brief: Record<string, string> | null;
-  guarantee: "estimate" | "instant" | "with-aircraft";
+  guarantee: "firm" | "estimate" | "instant" | "with-aircraft";
   /** Private requests: the estimate shown when the client asked. */
   estimate: number | null;
   /** estimate: waiting for the advisor's final price; offered: final price to accept; fixed: accepted, never moves. */
@@ -31,7 +31,7 @@ export interface ClientFlight {
 }
 
 export function toClientFlight(
-  b: { ref: string; date: string; time: string; pax: number; returnDate: string | null; price: number | null; currency: string; stage: number; payBy: string | null; aircraft: string | null; keepPassports: boolean; advisorNote: string | null; guarantee: "estimate" | "instant" | "with-aircraft"; estimate: number | null; priceAcceptedAt: Date | null; needsAdvisor: string | null; passengers: { seat: number; fullName: string | null; passportStatus: string }[]; paxComplete: boolean; briefSent: boolean; briefFields: Record<string, string> | null },
+  b: { ref: string; date: string; time: string; pax: number; returnDate: string | null; price: number | null; currency: string; stage: number; payBy: string | null; aircraft: string | null; keepPassports: boolean; advisorNote: string | null; guarantee: "firm" | "estimate" | "instant" | "with-aircraft"; estimate: number | null; priceAcceptedAt: Date | null; needsAdvisor: string | null; passengers: { seat: number; fullName: string | null; passportStatus: string }[]; paxComplete: boolean; briefSent: boolean; briefFields: Record<string, string> | null },
   fromCity: string,
   toCity: string,
   standardName: string,

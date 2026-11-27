@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AirportInput, type AirportHit } from "./AirportInput";
 import { AssuredCard } from "./AssuredCard";
+import { LEVELS } from "@/lib/membership";
 import { MembershipDialog } from "./MembershipDialog";
 import { openChat } from "./ChatWidget";
 import { ORDER, STANDARDS, type StandardId } from "@/lib/pricing/standards";
@@ -120,7 +121,7 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
   const tripLine = q ? `${q.trip.fromCity} to ${q.trip.toCity}, ${q.trip.date} at ${q.trip.time}, ${q.trip.pax} guests${q.shown ? `, ${STANDARDS[q.shown].name}` : ""}` : "No trip chosen yet";
   const chat = () => openChat({ context: tripLine });
 
-  /** One tap. Private: a free, non-binding request for the final price. Assured: the booking itself. */
+  /** One tap books at the price on screen, for every member. Only a standard priced by hand goes to the advisor first. */
   function confirm() {
     track("confirm_clicked", { standard: q?.shown ?? "advisor", tier: q?.tier ?? "guest" });
     gated(() => { void book(); });
@@ -232,21 +233,23 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
           {!q ? (
             <div className="card-a"><p className="why">{err || (ready ? "Pricing your flight…" : "Choose both airports to see your price.")}</p></div>
           ) : shown && shownPrice ? (
-            <div className={`card-a ${q.guarantee === "estimate" ? "" : "is-assured"}`}>
-              <div className="eyebrow">{q.guarantee === "estimate" ? (shown === q.recommended ? "We recommend" : "Your choice") : "Your Assured Price"}</div>
+            <div className={`card-a ${q.guarantee === "instant" ? "is-assured" : ""}`}>
+              <div className="eyebrow">{q.guarantee === "instant" ? "Your Assured Price" : shown === q.recommended ? "Your price" : "Your choice"}</div>
               <div className="std">{STANDARDS[shown].name}</div>
-              {q.guarantee === "estimate" && <span className="est">Estimate</span>}
               <div className="big">{money(shownPrice, q.trip.cur)}</div>
               <div className="final">
                 {q.trip.ret ? "Return" : "One way"} · all-inclusive{q.trip.route === "US" ? " · US taxes included" : ""}
-                {q.guarantee === "estimate" ? " · your final price within 2 hours" : q.guarantee === "instant" ? " · guaranteed" : ` · inside ${q.notice} hours, confirmed with the aircraft`}
+                {q.guarantee === "instant" ? " · price and aircraft guaranteed" : " · firm price, no waiting"}
               </div>
               <p className="why">{q.why}</p>
-              <button className="go" type="button" onClick={confirm} disabled={booking}>{booking ? "One moment…" : q.guarantee === "estimate" ? "Get my final price" : "Book now"}</button>
-              <NextSteps items={q.guarantee === "estimate"
-                ? [member ? "Tap once. Free, and you are not committed." : "Tap once. First time: your name and mobile, 30 seconds, free.", "Within 2 hours your advisor sends you one final, all-inclusive price.", "Accept it with one tap. Nothing to pay until the aircraft is confirmed."]
-                : ["Tap once. That is your booking, at this price.", "Within 2 hours we confirm your aircraft and crew.", "You pay once it is confirmed. Your advisor handles everything else."]} />
+              <button className="go" type="button" onClick={confirm} disabled={booking}>{booking ? "One moment…" : "Book now"}</button>
+              <NextSteps items={q.guarantee === "instant"
+                ? ["Tap once. That is your booking, at this price.", "Your aircraft is guaranteed: we confirm it and the crew within 2 hours.", "You pay once it is confirmed. Your advisor handles everything else."]
+                : [member ? "Tap once. That is your booking, at this price." : "Tap once. First time only: your name and mobile, 30 seconds.", "Within 2 hours we confirm your aircraft and crew, from every suitable aircraft in this cabin.", "Nothing to pay until it is confirmed. If none can be, we upgrade you at no extra cost or release you, free."]} />
               <button className="talk" type="button" onClick={chat}>Ask your advisor first</button>
+              <p className="cmp">{q.tier === "assured"
+                ? <><b>Assured:</b> a newer aircraft{q.guarantee === "instant" ? ", guaranteed" : ", guaranteed with " + q.notice + " hours' notice"}, at a price fixed for 12 months, peak days included.</>
+                : <><b>Private:</b> today&apos;s price, any suitable aircraft, subject to availability. Assured guarantees a newer aircraft at a price fixed all year.</>}</p>
             </div>
           ) : q.advisorStandard ? (
             <div className="card-a">
@@ -306,10 +309,10 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
             </>
           )}
 
-          {q && q.guarantee === "estimate" && shownPrice && (
+          {q && q.guarantee !== "instant" && q.tier !== "assured" && shownPrice && (
             <a className="upsell" href="/membership">
               <AssuredCard size="sm" />
-              <span className="up-t"><b>Make this price a promise.</b><span>Private, free: an estimate now, your final price within 2 hours. Assured: guaranteed now, booked in one tap.</span></span>
+              <span className="up-t"><b>Become Assured</b><span>A newer aircraft, guaranteed. Your prices fixed for 12 months, peak days included. {LEVELS.assured.price}.</span></span>
             </a>
           )}
           {q && <details className="terms bt mini-terms"><summary>Booking terms</summary><ol>{BOOKING_TERMS.map(([h, t]) => <li key={h}><b>{h}.</b> {t}</li>)}</ol><p className="fine">Draft for legal review.</p></details>}

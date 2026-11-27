@@ -13,7 +13,7 @@ export function GET() {
 - Price: one final, all-inclusive price per trip (aircraft, crew, positioning, fees, catering; US federal taxes on US domestic flights).
 - Payment only after the aircraft is confirmed (aim: within 2 hours of booking). Client pays MyPrivate-Jet; MyPrivate-Jet pays the operator.
 - If no aircraft of the booked standard is available at the price: a higher standard at the same price, or one new price the client may decline at no cost.
-- Two membership levels. Private (free): the price shown is an estimate; the advisor sends one final, all-inclusive price within 2 hours, accepted with one tap and fixed from then on. Assured (annual fee): the price shown is guaranteed, fixed for 12 months, any day including peak dates, with 72 hours' notice in Europe (96 hours elsewhere), booked in one tap, with a 24/7 advisor line; if we cannot fly the member at that price, the fee is refunded. Details: ${SITE.url}/membership
+- Two membership levels. No one waits: both levels see a firm, all-inclusive price at once and book in one tap. Private (free): today's price (moves with dates and peaks); any suitable aircraft from audited operators, subject to availability; payment only once everything is confirmed. Assured (annual fee): newer aircraft (under 7 years or refurbished in the last 2), guaranteed; prices fixed for 12 months, any day including peak dates, with 72 hours' notice in Europe (96 hours elsewhere), booked in one tap, with a 24/7 advisor line; if we cannot fly the member at that price, the fee is refunded. Details: ${SITE.url}/membership
 - Regions: ${SITE.areaServed.join(", ")}.
 
 ## Cabin standards
