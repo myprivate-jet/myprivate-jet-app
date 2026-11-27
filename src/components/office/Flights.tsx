@@ -6,6 +6,8 @@ import type { ClientFlight } from "@/lib/booking/view";
 import { addDays, longDate, money, shortDate } from "@/lib/format";
 import { acceptPrice, declinePrice, payBooking, savePassengers } from "@/server/actions/member";
 import { Modal } from "../MembershipDialog";
+import { nextAction } from "@/lib/booking/next";
+import Link from "next/link";
 
 const priceText = (x: ClientFlight) =>
   x.price != null ? money(x.price, x.currency) : x.estimate != null ? `About ${money(x.estimate, x.currency)}` : "Being priced";
@@ -37,8 +39,18 @@ function docs(x: ClientFlight) {
 
 export function Flights({ flights, demo = false, highlight, past }: { flights: ClientFlight[]; demo?: boolean; highlight?: string; past?: { route: string; standard: string; price: string; date: string; pax: number; line: string }[] }) {
   const [sheet, setSheet] = useState<null | { kind: "pay" | "pax" | "brief"; f: ClientFlight }>(null);
+  const n = nextAction(flights);
   return (
     <>
+      <div className={`nextup ${n.kind === "wait" ? "calm" : ""}`} role="status">
+        <div className="nu-k">{n.kind === "wait" ? "All in hand" : "Your next step"}</div>
+        <div className="nu-t">{n.title}</div>
+        <div className="nu-l">{n.line}</div>
+        {n.kind === "accept" && <PriceAnswer f={n.f} demo={demo} big />}
+        {n.kind === "pay" && <button className="go" type="button" onClick={() => setSheet({ kind: "pay", f: n.f })}>Pay now</button>}
+        {n.kind === "pax" && <button className="go" type="button" onClick={() => setSheet({ kind: "pax", f: n.f })}>Add names and passports</button>}
+        {n.kind === "plan" && <Link className="go" href="/">Plan a flight</Link>}
+      </div>
       <h4>Upcoming flights</h4>
       {!flights.length && <p className="sub" style={{ margin: 0 }}>No flights yet. When you book one, it appears here with a checklist of every step.</p>}
       {flights.map((x) => (
@@ -86,7 +98,7 @@ export function Flights({ flights, demo = false, highlight, past }: { flights: C
   );
 }
 
-function PriceAnswer({ f, demo }: { f: ClientFlight; demo: boolean }) {
+function PriceAnswer({ f, demo, big = false }: { f: ClientFlight; demo: boolean; big?: boolean }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
@@ -99,9 +111,9 @@ function PriceAnswer({ f, demo }: { f: ClientFlight; demo: boolean }) {
     router.refresh();
   }
   return (
-    <div className="accept">
-      <button className="mini" type="button" disabled={busy} onClick={() => run(acceptPrice)}>Accept {money(f.price!, f.currency)}</button>
-      <button className="mini ghost" type="button" disabled={busy} onClick={() => run(declinePrice)}>Decline</button>
+    <div className={big ? "accept big" : "accept"}>
+      <button className={big ? "go" : "mini"} type="button" disabled={busy} onClick={() => run(acceptPrice)}>Accept {money(f.price!, f.currency)}</button>
+      <button className={big ? "talk" : "mini ghost"} type="button" disabled={busy} onClick={() => run(declinePrice)}>Decline, at no cost</button>
       {msg && <span className="cs">{msg}</span>}
     </div>
   );

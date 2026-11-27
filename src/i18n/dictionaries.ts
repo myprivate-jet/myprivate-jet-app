@@ -11,7 +11,7 @@ export const isLocale = (v: unknown): v is Locale => typeof v === "string" && (L
 
 const en = {
   tagline: "Private Aviation Office",
-  nav: { plan: "Plan a flight", standards: "Cabin standards", guides: "Guides", office: "Your Office", profile: "Profile" },
+  nav: { plan: "Plan a flight", standards: "Cabin standards", guides: "Guides", office: "Your Office", profile: "Profile", join: "Join or sign in" },
   heroQ: "One recommendation. One final price.",
   promise: [
     ["One final price", "All-inclusive. It never moves."],
@@ -31,7 +31,7 @@ export type Dict = typeof en;
 
 const fr: Dict = {
   tagline: "Bureau d'aviation privée",
-  nav: { plan: "Préparer un vol", standards: "Standards de cabine", guides: "Guides", office: "Votre bureau", profile: "Profil" },
+  nav: { plan: "Préparer un vol", standards: "Standards de cabine", guides: "Guides", office: "Votre bureau", profile: "Profil", join: "Adhérer ou se connecter" },
   heroQ: "Une recommandation. Un prix final.",
   promise: [
     ["Un prix final", "Tout compris. Il ne bouge jamais."],
@@ -50,7 +50,7 @@ const fr: Dict = {
 
 const it: Dict = {
   tagline: "Ufficio di aviazione privata",
-  nav: { plan: "Pianifica un volo", standards: "Standard di cabina", guides: "Guide", office: "Il tuo ufficio", profile: "Profilo" },
+  nav: { plan: "Pianifica un volo", standards: "Standard di cabina", guides: "Guide", office: "Il tuo ufficio", profile: "Profilo", join: "Iscriviti o accedi" },
   heroQ: "Una raccomandazione. Un prezzo finale.",
   promise: [
     ["Un prezzo finale", "Tutto incluso. Non cambia mai."],
@@ -69,7 +69,7 @@ const it: Dict = {
 
 const ar: Dict = {
   tagline: "مكتب الطيران الخاص",
-  nav: { plan: "خطّط رحلة", standards: "معايير المقصورة", guides: "أدلة", office: "مكتبك", profile: "الملف الشخصي" },
+  nav: { plan: "خطّط رحلة", standards: "معايير المقصورة", guides: "أدلة", office: "مكتبك", profile: "الملف الشخصي", join: "انضم أو سجّل الدخول" },
   heroQ: "توصية واحدة. سعر نهائي واحد.",
   promise: [
     ["سعر نهائي واحد", "شامل لكل شيء. لا يتغيّر أبداً."],

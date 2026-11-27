@@ -21,9 +21,9 @@ export function MembershipForm({ onDone }: { onDone: () => void }) {
   if (!step2)
     return (
       <form action={send} noValidate>
-        <div className="eyebrow">Membership</div>
-        <h3 id="vt">Become a member. Two steps, once.</h3>
-        <p>Your details stay private and are used only to arrange your flights.</p>
+        <div className="eyebrow">Free · 30 seconds · once</div>
+        <h3 id="vt">Who are we flying?</h3>
+        <p>Your name and mobile, so your advisor can send you your price and keep every flight in your Private Office. We text you a code; that is all. Already a member? Use the same mobile number.</p>
         <div className="row2b">
           <label className="fld">First name<input ref={first} name="first" autoComplete="given-name" required /></label>
           <label className="fld">Family name<input name="last" autoComplete="family-name" required /></label>
@@ -40,18 +40,18 @@ export function MembershipForm({ onDone }: { onDone: () => void }) {
           <p className="fine">Draft wording, pending legal review. <a href="/membership-terms" target="_blank">Read the Membership Terms</a>.</p>
         </details>
         <div className="err" role="alert">{s1 && !s1.ok ? s1.error : ""}</div>
-        <button className="btn" type="submit" disabled={sending}>{sending ? "Sending…" : "Send my code by SMS"}</button>
+        <button className="btn" type="submit" disabled={sending}>{sending ? "Sending…" : "Text me a code"}</button>
       </form>
     );
 
   return (
     <form action={verify} noValidate>
-      <div className="eyebrow">Mobile verification</div>
+      <div className="eyebrow">Last step</div>
       <h3>Enter the 6-digit code</h3>
       <p>We sent a code by SMS to {s1.masked}. It is valid for 10 minutes.</p>
       <label className="fld">Code<input ref={code} name="code" className="code" inputMode="numeric" autoComplete="one-time-code" maxLength={6} /></label>
       <div className="err" role="alert">{s2 && !s2.ok ? s2.error : ""}</div>
-      <button className="btn" type="submit" disabled={verifying}>{verifying ? "Checking…" : "Verify and continue"}</button>
+      <button className="btn" type="submit" disabled={verifying}>{verifying ? "Checking…" : "Continue"}</button>
       {s1.simulated && <div className="fine">Test mode: SMS is not connected yet, so any 6 digits work.</div>}
     </form>
   );

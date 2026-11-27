@@ -20,7 +20,7 @@ export function MembershipCard({ tier, requested, demo = false, holder }: { tier
           <p className="lv-p">You asked to become Assured. Your advisor will confirm the details with you.</p>
         ) : (
           <>
-            <p className="lv-p">{LEVELS.assured.line}</p>
+            <p className="lv-p">Upgrade to Assured ({LEVELS.assured.price}): your prices guaranteed and booked in one tap, any day of the year.</p>
             <div className="lv-a">
               <button className="mini" type="button" disabled={pending} onClick={() => start(async () => { if (!demo) { await requestAssured(); router.refresh(); } setAsked(true); })}>Become Assured</button>
               <Link href="/membership" className="so">How it works</Link>

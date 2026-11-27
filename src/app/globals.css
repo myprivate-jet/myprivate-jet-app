@@ -694,3 +694,30 @@ footer{border-top:0;margin-top:120px;text-align:center}
 .card-a.is-assured .go{background:#f4efe2;color:#0e1526}
 .qh{font-size:clamp(48px,10vw,88px)}
 .lvl ul{align-content:start}
+/* Zero-confusion: progress, hints, what happens next, next-step banner */
+.prog{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:220px;margin-bottom:22px}
+.prog span{height:4px;border-radius:4px;background:var(--line)}
+.prog span.on{background:var(--navy)}
+.hint{margin:18px 0 0;font-size:14px;color:var(--muted)}
+.manifesto .so{font-size:14px;font-weight:600;color:var(--navy);justify-self:start;margin-top:6px}
+.next{list-style:none;margin:18px 0 4px;padding:0;display:grid;gap:8px;font-size:14px;color:var(--muted)}
+.next li{display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:start}
+.next li span{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;background:var(--quiet);color:var(--navy)}
+.card-a.is-assured .next{color:rgba(244,239,226,.75)}
+.card-a.is-assured .next li span{background:rgba(244,239,226,.12);color:#f4efe2}
+.disc{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-top:14px}
+.disc .more{margin:0}
+.adjust{margin-top:6px}
+.nextup{background:var(--navy);color:var(--ivory);border-radius:22px;padding:22px 24px;margin:0 0 26px;display:grid;gap:4px}
+.nextup.calm{background:var(--quiet);color:var(--ink)}
+.nu-k{font-size:12.5px;font-weight:700;color:var(--gold)}
+.nextup:not(.calm) .nu-k{color:#d6b46e}
+.nu-t{font:700 21px/1.25 var(--display);letter-spacing:-.02em}
+.nu-l{font-size:14px;opacity:.8}
+.nextup .go{margin-top:14px;background:var(--ivory);color:var(--navy);display:grid;place-items:center;text-decoration:none}
+.nextup.calm .go{background:var(--navy);color:var(--ivory)}
+.accept.big{display:grid;gap:4px;margin-top:4px}
+.nextup .talk{color:rgba(244,239,226,.75)}
+.hint{margin:-12px 0 24px}
+header.top{flex-wrap:nowrap}
+@media (max-width:480px){.brand{font-size:18px}.nav a{padding:8px 12px;font-size:13px}.lang{font-size:12px;max-width:74px}.hdr-r{gap:8px}}

@@ -35,6 +35,13 @@ function Rich({ s }: { s: string }) {
 }
 
 const QUESTIONS: Record<Exclude<Step, "answer">, string> = { to: "Where to?", from: "Flying from?", when: "When?", who: "How many of you?" };
+const QORDER: Exclude<Step, "answer">[] = ["to", "from", "when", "who"];
+const HINTS: Record<Exclude<Step, "answer">, string> = {
+  to: "Tap a place or type any city. Four taps to your price; no account needed to see it.",
+  from: "Then when, and how many of you. Your price follows at once.",
+  when: "Choose a day and a time of day. Then how many of you, and your price.",
+  who: "Tap the number. Your recommended cabin and price appear straight away.",
+};
 
 /**
  * One question per screen, then one answer: a single recommended cabin and a single final price.
@@ -62,6 +69,8 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [more, setMore] = useState(false);
+  const [adjust, setAdjust] = useState(false);
+  const extras = [ret, bags !== "std", standUp, attendant, pets, Boolean(pick)].filter(Boolean).length;
   const [gate, setGate] = useState<null | (() => void)>(null);
   const [booking, setBooking] = useState(false);
   const topRef = useRef<HTMLDivElement>(null);
@@ -147,7 +156,11 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
 
       {step !== "answer" && (
         <section className="q" aria-live="polite" key={step}>
+          <div className="prog" aria-label={`Question ${QORDER.indexOf(step) + 1} of 4`}>
+            {QORDER.map((k, i) => <span key={k} className={i <= QORDER.indexOf(step) ? "on" : ""} />)}
+          </div>
           <h2 className="qh">{QUESTIONS[step]}</h2>
+          <p className="hint">{HINTS[step]}</p>
 
           {(step === "to" || step === "from") && (
             <>
@@ -208,6 +221,7 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
             <div className="manifesto">
               <p>Tell us where. We take care of everything else.</p>
               <p className="m2">Not a marketplace, not an auction, never the cheapest bidder. One advisor, audited operators, and a price you can hold us to.</p>
+              <a className="so" href="/demo">See what members see</a>
             </div>
           )}
         </section>
@@ -229,15 +243,18 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
               </div>
               <p className="why">{q.why}</p>
               <button className="go" type="button" onClick={confirm} disabled={booking}>{booking ? "One moment…" : q.guarantee === "estimate" ? "Get my final price" : "Book now"}</button>
-              <p className="tap-note">{q.guarantee === "estimate" ? "Free and without commitment. Your advisor sends one final price; you accept it with one tap." : "One tap books it under your membership mandate. Nothing to pay until the aircraft is confirmed."}</p>
+              <NextSteps items={q.guarantee === "estimate"
+                ? [member ? "Tap once. Free, and you are not committed." : "Tap once. First time: your name and mobile, 30 seconds, free.", "Within 2 hours your advisor sends you one final, all-inclusive price.", "Accept it with one tap. Nothing to pay until the aircraft is confirmed."]
+                : ["Tap once. That is your booking, at this price.", "Within 2 hours we confirm your aircraft and crew.", "You pay once it is confirmed. Your advisor handles everything else."]} />
               <button className="talk" type="button" onClick={chat}>Ask your advisor first</button>
             </div>
           ) : q.advisorStandard ? (
             <div className="card-a">
               <div className="eyebrow">Priced personally</div>
               <div className="std">{STANDARDS[q.advisorStandard].name}</div>
-              <p className="why">{q.advisorReason}. Send it once: your advisor replies with one final price within 2 hours.</p>
+              <p className="why">{q.advisorReason}.</p>
               <button className="go" type="button" onClick={confirm} disabled={booking}>{booking ? "One moment…" : "Send to your advisor"}</button>
+              <NextSteps items={[member ? "Tap once. Free, and you are not committed." : "Tap once. First time: your name and mobile, 30 seconds, free.", "Within 2 hours your advisor sends you one final, all-inclusive price.", "Accept it with one tap. Nothing to pay until the aircraft is confirmed."]} />
               <button className="talk" type="button" onClick={chat}>Ask your advisor first</button>
             </div>
           ) : (
@@ -250,6 +267,11 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
 
           {q && (
             <>
+              <div className="disc">
+                <button className="more" type="button" aria-expanded={adjust} onClick={() => setAdjust(!adjust)}>{adjust ? "Done" : `Change cabin or add extras${extras ? ` (${extras})` : ""}`}</button>
+                <button className="more" type="button" aria-expanded={more} onClick={() => setMore(!more)}>{more ? "Hide details" : "Why this cabin"}</button>
+              </div>
+              {adjust && <div className="adjust">
               <div className="tweaks" aria-label="Anything special">
                 <button type="button" aria-pressed={ret} className={ret ? "on" : ""} onClick={() => { setRet(!ret); }}>Return</button>
                 {ret && <label className="tw-date"><span className="visually">Return date</span><input type="date" value={rdate} min={date} onChange={(e) => e.target.value && setRdate(e.target.value)} /></label>}
@@ -272,8 +294,8 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
                   );
                 })}
               </div>
+              </div>}
 
-              <button className="more" type="button" aria-expanded={more} onClick={() => setMore(!more)}>{more ? "Less" : "Why this cabin, and what to know"}</button>
               {more && (
                 <div className="detail">
                   <div className="facts">{q.facts.map((f) => <div className="fact" key={f.k}><div className="k">{f.k}</div><div className="v">{f.v}</div><div className="d">{f.d}</div></div>)}</div>
@@ -287,7 +309,7 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
           {q && q.guarantee === "estimate" && shownPrice && (
             <a className="upsell" href="/membership">
               <AssuredCard size="sm" />
-              <span className="up-t"><b>Make this price a promise.</b><span>Assured members see it guaranteed and book in one tap, any day of the year.</span></span>
+              <span className="up-t"><b>Make this price a promise.</b><span>Private, free: an estimate now, your final price within 2 hours. Assured: guaranteed now, booked in one tap.</span></span>
             </a>
           )}
           {q && <details className="terms bt mini-terms"><summary>Booking terms</summary><ol>{BOOKING_TERMS.map(([h, t]) => <li key={h}><b>{h}.</b> {t}</li>)}</ol><p className="fine">Draft for legal review.</p></details>}
@@ -297,11 +319,16 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
         </section>
       )}
 
-      {!member && (
-        <p className="gnote">{guestNote.guest} <button type="button" onClick={() => gated(() => router.push("/office"))}>{guestNote.open}</button> <span aria-hidden="true">·</span> <button type="button" onClick={() => router.push("/demo")}>{guestNote.demo}</button></p>
-      )}
-
       {gate && <MembershipDialog onClose={() => setGate(null)} onDone={() => { const fn = gate; setGate(null); router.refresh(); fn(); }} />}
     </div>
+  );
+}
+
+/** What happens next, in three short lines, under every main button. */
+function NextSteps({ items }: { items: string[] }) {
+  return (
+    <ol className="next" aria-label="What happens next">
+      {items.map((t, i) => <li key={i}><span>{i + 1}</span>{t}</li>)}
+    </ol>
   );
 }
