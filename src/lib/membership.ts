@@ -1,13 +1,13 @@
 /**
- * The two membership levels (decided 2026-11-27). Fee and 96-hour notice approved by Pascal 2026-11-27;
- * the fee-back wording is still being finalised (FEE_BACK.status).
+ * The two membership levels (decided 2026-11-27). Fee, 96-hour notice and fee-back wording approved by Pascal 2026-11-27,
+ * pending legal review of the Membership Terms.
  * Shared by the public page, the price card, the Office and llms.txt, so the promise reads the same everywhere.
  */
 export const ASSURED_FEE = { amount: 15000, currency: "EUR", label: "€15,000 a year", status: "approved" as const };
 
-/** The fee-back promise in plain words. Wording awaiting final approval. */
+/** The fee-back promise in plain words. Approved 2026-11-27; legal review pending. */
 export const FEE_BACK = {
-  status: "draft" as const,
+  status: "approved" as const,
   short: "If we ever fail you, the whole year's fee comes back",
   text: "If, on any request made with the required notice, we cannot fly you in your standard at your Assured Price, your whole annual fee is refunded: in money, not as a credit. And we still find you an aircraft, at one new price you are free to decline.",
 };

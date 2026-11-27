@@ -53,7 +53,7 @@ export default async function Membership() {
       <p>{FEE_BACK.text}</p>
       <h2>In one example</h2>
       <p>Four guests, Geneva to Nice on a Friday in June. A Private member sees the price at once, marked as an estimate, and receives the final price from their advisor within 2 hours, then accepts it with one tap. An Assured member sees the same figure marked as guaranteed and books it on the spot, even on Grand Prix weekend.</p>
-      <p className="fine">The fee-back wording is being finalised. Membership Terms are a draft for legal review.</p>
+      <p className="fine">Membership Terms, including the fee-back promise, are pending legal review.</p>
     </div>
   );
 }
