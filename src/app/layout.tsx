@@ -9,7 +9,7 @@ import { JsonLd } from "@/components/JsonLd";
 
 const display = Inter_Tight({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-display", display: "swap" });
 const body = Inter({ subsets: ["latin"], variable: "--font-body", display: "swap" });
-const lux = Cormorant_Garamond({ subsets: ["latin"], weight: ["500", "600"], variable: "--font-lux", display: "swap" });
+const lux = Cormorant_Garamond({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-lux", display: "swap" });
 const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [{ media: "(prefers-color-scheme: light)", color: "#f6f5f1" }, { media: "(prefers-color-scheme: dark)", color: "#0b0f18" }],
+  themeColor: [{ media: "(prefers-color-scheme: light)", color: "#f3f0ea" }, { media: "(prefers-color-scheme: dark)", color: "#111110" }],
   viewportFit: "cover",
 };
 
