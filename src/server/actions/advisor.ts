@@ -54,6 +54,7 @@ export async function chooseOffer(ref: string, offerId: string) {
   const [o] = await db().select().from(offers).where(and(eq(offers.id, offerId), eq(offers.bookingId, b.id))).limit(1);
   if (!o) throw new Error("Offer not found.");
   if (!o.audited) throw new Error("This operator has no audit on file.");
+  if (!b.priceAcceptedAt) throw new Error("The client has not accepted a final price yet.");
   if (b.price != null && o.cost > b.price) throw new Error("This offer is above our price. We absorb nothing: use the exception options.");
   await db().update(offers).set({ status: "chosen" }).where(eq(offers.id, o.id));
   const payBy = b.payBy ?? (addDays(b.date, -5) < todayISO() ? todayISO() : addDays(b.date, -5));
@@ -94,7 +95,9 @@ export async function setAdvisorPrice(ref: string, priceValue: number) {
   const s = await requireStaff();
   const b = await byRef(ref);
   if (!(priceValue > 0)) throw new Error("Give a price.");
-  await db().update(bookings).set({ price: up100(priceValue), stage: 3, needsAdvisor: null, sla: null, waitingOn: "RFQ sent to qualified operators", priceValidUntil: new Date(Date.now() + 24 * 36e5), updatedAt: new Date() }).where(eq(bookings.id, b.id));
+  if (b.priceAcceptedAt) throw new Error("The client has already accepted a price. It is fixed.");
+  // One final price, sent to the client to accept or decline with one tap.
+  await db().update(bookings).set({ price: up100(priceValue), stage: 1, needsAdvisor: null, sla: null, waitingOn: "Client to accept the final price · valid 24 h", priceValidUntil: new Date(Date.now() + 24 * 36e5), updatedAt: new Date() }).where(eq(bookings.id, b.id));
   await audit(s.email, "price.set", { bookingId: b.id }, { price: up100(priceValue) });
   done();
 }
@@ -227,4 +230,12 @@ export async function askOps(question: string, ref?: string): Promise<{ answer: 
     }
   }
   return { answer: opsFallbackAnswer(q, list, sel), ai: false };
+}
+
+/** Membership level. Assured is activated by the advisor once the fee is agreed. */
+export async function setMemberTier(memberId: string, tier: "private" | "assured") {
+  const s = await requireStaff();
+  await db().update(schema.members).set({ tier, assuredSince: tier === "assured" ? new Date() : null }).where(eq(schema.members.id, memberId));
+  await audit(s.email, "member.tier", { memberId }, { tier });
+  done();
 }

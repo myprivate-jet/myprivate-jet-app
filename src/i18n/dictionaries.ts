@@ -16,7 +16,7 @@ const en = {
   promise: [
     ["One final price", "All-inclusive. It never moves."],
     ["Never a downgrade", "Same standard or higher, at our cost."],
-    ["No subscription", "Free membership. No deposit, no hours to buy."],
+    ["Free to join", "Private membership is free. No deposit, no hours to buy."],
     ["One advisor", "From first question to landing."],
   ],
   chat: "Chat with your advisor",
@@ -25,7 +25,7 @@ const en = {
   openOffice: "Open your Private Office",
   demo: "See a demo",
   footer: "MyPrivate-Jet arranges flights as the client's agent. Flights are operated by licensed, audited air carriers, which keep final authority over every flight.",
-  footerLinks: { how: "The Assured Price", standards: "Cabin standards", guides: "Guides", faq: "Questions", terms: "Membership terms", privacy: "Privacy" },
+  footerLinks: { how: "The Assured Price", membership: "Membership", standards: "Cabin standards", guides: "Guides", faq: "Questions", terms: "Membership terms", privacy: "Privacy" },
 };
 export type Dict = typeof en;
 
@@ -36,7 +36,7 @@ const fr: Dict = {
   promise: [
     ["Un prix final", "Tout compris. Il ne bouge jamais."],
     ["Jamais de déclassement", "Même standard ou supérieur, à nos frais."],
-    ["Sans abonnement", "Adhésion gratuite. Ni acompte, ni heures à acheter."],
+    ["Adhésion gratuite", "L'adhésion Private est gratuite. Ni acompte, ni heures à acheter."],
     ["Un seul conseiller", "De la première question à l'atterrissage."],
   ],
   chat: "Écrire à votre conseiller",
@@ -45,7 +45,7 @@ const fr: Dict = {
   openOffice: "Ouvrir votre bureau privé",
   demo: "Voir une démonstration",
   footer: "MyPrivate-Jet organise les vols en qualité de mandataire du client. Les vols sont opérés par des transporteurs aériens agréés et audités, qui gardent l'autorité finale sur chaque vol.",
-  footerLinks: { how: "Le prix garanti", standards: "Standards de cabine", guides: "Guides", faq: "Questions", terms: "Conditions d'adhésion", privacy: "Confidentialité" },
+  footerLinks: { how: "Le prix garanti", membership: "Adhésion", standards: "Standards de cabine", guides: "Guides", faq: "Questions", terms: "Conditions d'adhésion", privacy: "Confidentialité" },
 };
 
 const it: Dict = {
@@ -55,7 +55,7 @@ const it: Dict = {
   promise: [
     ["Un prezzo finale", "Tutto incluso. Non cambia mai."],
     ["Mai un declassamento", "Stesso standard o superiore, a nostre spese."],
-    ["Nessun abbonamento", "Adesione gratuita. Nessun deposito, nessuna ora da acquistare."],
+    ["Adesione gratuita", "L'adesione Private è gratuita. Nessun deposito, nessuna ora da acquistare."],
     ["Un solo consulente", "Dalla prima domanda all'atterraggio."],
   ],
   chat: "Scrivi al tuo consulente",
@@ -64,7 +64,7 @@ const it: Dict = {
   openOffice: "Apri il tuo ufficio privato",
   demo: "Guarda una demo",
   footer: "MyPrivate-Jet organizza i voli come mandatario del cliente. I voli sono operati da vettori aerei autorizzati e verificati, che mantengono l'autorità finale su ogni volo.",
-  footerLinks: { how: "Il prezzo garantito", standards: "Standard di cabina", guides: "Guide", faq: "Domande", terms: "Condizioni di adesione", privacy: "Privacy" },
+  footerLinks: { how: "Il prezzo garantito", membership: "Adesione", standards: "Standard di cabina", guides: "Guide", faq: "Domande", terms: "Condizioni di adesione", privacy: "Privacy" },
 };
 
 const ar: Dict = {
@@ -74,7 +74,7 @@ const ar: Dict = {
   promise: [
     ["سعر نهائي واحد", "شامل لكل شيء. لا يتغيّر أبداً."],
     ["لا تخفيض للمستوى أبداً", "المعيار نفسه أو أعلى، على نفقتنا."],
-    ["بلا اشتراك", "عضوية مجانية. لا عربون ولا ساعات للشراء."],
+    ["انضمام مجاني", "عضوية Private مجانية. لا عربون ولا ساعات للشراء."],
     ["مستشار واحد", "من السؤال الأول حتى الهبوط."],
   ],
   chat: "تحدّث مع مستشارك",
@@ -83,7 +83,7 @@ const ar: Dict = {
   openOffice: "افتح مكتبك الخاص",
   demo: "شاهد عرضاً تجريبياً",
   footer: "تنظّم MyPrivate-Jet الرحلات بصفتها وكيلاً عن العميل. تُشغَّل الرحلات من قبل ناقلين جويين مرخّصين وخاضعين للتدقيق، ولهم السلطة النهائية على كل رحلة.",
-  footerLinks: { how: "السعر المضمون", standards: "معايير المقصورة", guides: "أدلة", faq: "أسئلة", terms: "شروط العضوية", privacy: "الخصوصية" },
+  footerLinks: { how: "السعر المضمون", membership: "العضوية", standards: "معايير المقصورة", guides: "أدلة", faq: "أسئلة", terms: "شروط العضوية", privacy: "الخصوصية" },
 };
 
 export const DICTS: Record<Locale, Dict> = { en, fr, it, ar };

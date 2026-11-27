@@ -16,9 +16,10 @@ export const MANDATE_TICK =
   "I accept the Membership Terms, including a mandate for MyPrivate-Jet to contract the flights I book and to sign their charter agreements on my behalf.";
 
 export const BOOKING_TERMS: [string, string][] = [
-  ["Booking and confirmation", "A booking is your instruction to us. Your price is guaranteed once we confirm the aircraft, which we aim to do within 2 hours. Nothing is payable before."],
+  ["Your price", "Private members see an estimate first; we then send one final, all-inclusive price within 2 hours, which you accept or decline with one tap. Assured members see a guaranteed price and book it with one tap. Once accepted or booked, the price is fixed."],
+  ["Booking and confirmation", "A booking is your instruction to us. We aim to confirm the aircraft within 2 hours. Nothing is payable before."],
   ["Confirmed or free", "If no aircraft of the booked standard is available at the Assured Price, we either offer a higher standard at the same price, or propose one new final price for you to accept or decline with one tap. If you decline, the booking ends at no cost to either side."],
-  ["Short notice and peak dates", "For departures within 7 days, during listed peak events, or on routes priced by your advisor, the price is confirmed together with the aircraft and is not guaranteed in advance."],
+  ["Assured notice", "An Assured price is guaranteed any day of the year, peak dates included, for departures at least 72 hours ahead in Europe and 96 hours elsewhere. Inside that notice, and on routes priced personally by your advisor, the price is confirmed together with the aircraft. If we cannot fly an Assured member at the guaranteed price, the annual fee is refunded."],
   ["Price validity", "A displayed price is valid for 24 hours and only for the trip as described: date, time, airports, guests and luggage."],
   ["Payment", "Payment is due 5 days before departure, or immediately for flights within 5 days. A flight not paid in cleared funds may be cancelled, and clause 7 then applies."],
   ["Replacement after confirmation", "If the operator cannot perform, we arrange a replacement of the same or higher standard at our cost, up to 25% of the price paid. If no replacement is available, we refund the full price."],

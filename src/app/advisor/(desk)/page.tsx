@@ -6,7 +6,7 @@ import { haversineKm, hm, up100 } from "@/lib/pricing/engine";
 import { ORDER, STANDARDS, type StandardId } from "@/lib/pricing/standards";
 import { STAGES, STAGE_DESCRIPTIONS } from "@/lib/booking/stages";
 import { longDate, money, shortDate } from "@/lib/format";
-import { AdvanceStage, ApprovePayout, ChooseOffer, ExceptionPanel, SetPrice } from "@/components/advisor/Actions";
+import { AdvanceStage, ApprovePayout, ChooseOffer, ExceptionPanel, SetPrice, TierToggle } from "@/components/advisor/Actions";
 import { BriefBuilder } from "@/components/advisor/BriefBuilder";
 import { MailTab } from "@/components/advisor/MailTab";
 
@@ -103,6 +103,7 @@ function Overview({ d }: { d: D }) {
     <div className="adet">
       <div>
         <h3 className="ah">{b.ref} · {d.member.firstName.charAt(0)}. {d.member.lastName} · {cityOf(b.fromIcao)} to {cityOf(b.toIcao)}</h3>
+        <p className="sub" style={{ margin: "0 0 6px" }}><TierToggle memberId={d.member.id} tier={d.member.tier} requested={Boolean(d.member.assuredRequestedAt)} /></p>
         <p className="sub" style={{ margin: "0 0 14px" }}>{longDate(b.date)} at {b.time} · {b.pax} guests · {STANDARDS[std]?.name}{b.flags.length ? <> · <span className="flag">{b.flags.join(" · ")}</span></> : null}</p>
         <ol className="tl">
           {STAGES.map((s, i) => <li key={s.key} className={i < b.stage ? "d" : i === b.stage ? "n" : ""}><span className={`tw ${s.who.toLowerCase()}`}>{s.who}</span><div><b>{s.name}</b><span>{STAGE_DESCRIPTIONS[s.key]}</span></div></li>)}
@@ -110,9 +111,9 @@ function Overview({ d }: { d: D }) {
         <p style={{ marginTop: 12 }}><AdvanceStage refId={b.ref} /></p>
       </div>
       <div>
-        {b.price == null && b.stage <= 1 && <SetPrice refId={b.ref} currency={b.currency} />}
+        {!b.priceAcceptedAt && b.stage <= 1 && <SetPrice refId={b.ref} currency={b.currency} estimate={b.estimate} sent={b.price} />}
         <h3 className="ah">Offers received</h3>
-        {b.stage < 3 ? <p className="sub">Sourcing starts when the price is set and the client has booked.</p> : !d.offers.length ? <p className="sub">Waiting for operator replies to the RFQ.</p> : (
+        {!d.offers.length && b.stage < 3 ? <p className="sub">Sourcing starts when the request arrives.</p> : !d.offers.length ? <p className="sub">Waiting for operator replies to the RFQ.</p> : (
           <div className="atb">
             <table className="offers">
               <thead><tr><th>Operator</th><th>Aircraft</th><th>Year</th><th>Audit</th><th className="n">Cost</th><th className="n">Margin</th><th /></tr></thead>

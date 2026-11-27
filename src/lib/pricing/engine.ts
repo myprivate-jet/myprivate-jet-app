@@ -13,8 +13,14 @@ import type { Airport } from "./airports";
 
 export const CONFIRM_HOURS = 2;
 const ASSURED_Q = 3; // resq index 3 = P90
-/** No instant guarantee within this many days of departure (decided 2026-11-27). */
-export const NO_INSTANT_GUARANTEE_DAYS = 7;
+/**
+ * Two membership levels (decided 2026-11-27).
+ * Private (free): the price on screen is an estimate; the advisor sends one final price within CONFIRM_HOURS.
+ * Assured (annual fee): the price on screen is guaranteed, any day including peak dates, with this much notice.
+ */
+export type Tier = "guest" | "private" | "assured";
+export type Guarantee = "estimate" | "instant" | "with-aircraft";
+export const ASSURED_NOTICE_HOURS = { europe: 72, elsewhere: 96 } as const;
 
 const EU = new Set("AL AD AT BA BE BG BY CH CY CZ DE DK EE ES FI FO FR GB GG GI GR HR HU IE IM IS IT JE LI LT LU LV MC MD ME MK MT NL NO PL PT RO RS SE SI SK SM UA VA XK TR".split(" "));
 const ME = new Set("AE SA QA KW BH OM JO LB IL IQ IR YE SY EG".split(" "));
@@ -199,10 +205,18 @@ export function facts(s: StandardId, t: Trip, R: Record<StandardId, Screen>) {
   ];
 }
 
-/** Whether the price can be guaranteed now, or only together with the aircraft. */
-export function guarantee(t: Trip, ev: PeakEvent | null, now = new Date()): "instant" | "with-aircraft" {
-  const hoursAway = (new Date(`${t.date}T12:00:00`).getTime() - now.getTime()) / 36e5;
-  return ev || hoursAway < NO_INSTANT_GUARANTEE_DAYS * 24 ? "with-aircraft" : "instant";
+/** Hours of notice an Assured member needs for an instant guaranteed price on this trip. */
+export const assuredNotice = (t: Pick<Trip, "route">) => (t.route === "EU" ? ASSURED_NOTICE_HOURS.europe : ASSURED_NOTICE_HOURS.elsewhere);
+
+/**
+ * What the price on screen means.
+ * Guests and Private members see an estimate. Assured members see a guaranteed price,
+ * except inside the notice period, where the price is confirmed together with the aircraft.
+ */
+export function guarantee(t: Trip, tier: Tier, now = new Date()): Guarantee {
+  if (tier !== "assured") return "estimate";
+  const hoursAway = (new Date(`${t.date}T${t.time || "12:00"}:00`).getTime() - now.getTime()) / 36e5;
+  return hoursAway < assuredNotice(t) ? "with-aircraft" : "instant";
 }
 
 export interface QuoteResult {
@@ -215,13 +229,16 @@ export interface QuoteResult {
   facts: { k: string; v: string; d: string }[];
   insights: string[];
   event: string | null;
-  guarantee: "instant" | "with-aircraft";
+  guarantee: Guarantee;
+  tier: Tier;
+  /** Hours of notice for an instant Assured price on this trip. */
+  notice: number;
   /** When no standard is priced automatically, the one the advisor prices. */
   advisorStandard: StandardId | null;
   advisorReason: string | null;
 }
 
-export function quote(t: Trip, pick?: StandardId | null, now = new Date()): QuoteResult {
+export function quote(t: Trip, pick?: StandardId | null, now = new Date(), tier: Tier = "guest"): QuoteResult {
   const R = screenAll(t);
   const auto = recommend(t, R);
   const pickSt = pick ? R[pick]?.st : undefined;
@@ -240,7 +257,9 @@ export function quote(t: Trip, pick?: StandardId | null, now = new Date()): Quot
     facts: focus ? facts(focus, t, R) : [],
     insights: focus ? insights(focus, t, R, ev) : [],
     event: ev?.name ?? null,
-    guarantee: guarantee(t, ev, now),
+    guarantee: guarantee(t, tier, now),
+    tier,
+    notice: assuredNotice(t),
     advisorStandard: advS,
     advisorReason: advS ? R[advS].codes[0][1] : null,
   };

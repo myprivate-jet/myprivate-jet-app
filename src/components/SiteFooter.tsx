@@ -7,6 +7,7 @@ export async function SiteFooter() {
   return (
     <footer>
       <div className="footer-links">
+        <Link href="/membership">{f.membership}</Link>
         <Link href="/assured-price">{f.how}</Link>
         <Link href="/standards">{f.standards}</Link>
         <Link href="/guides">{f.guides}</Link>

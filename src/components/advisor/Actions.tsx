@@ -1,6 +1,6 @@
 "use client";
 import { useState, useTransition } from "react";
-import { advanceStage, approveOperatorPayment, chooseOffer, resolveException, setAdvisorPrice } from "@/server/actions/advisor";
+import { advanceStage, approveOperatorPayment, chooseOffer, resolveException, setAdvisorPrice, setMemberTier } from "@/server/actions/advisor";
 
 function useAct() {
   const [pending, start] = useTransition();
@@ -24,17 +24,35 @@ export function AdvanceStage({ refId }: { refId: string }) {
   return <button className="so" type="button" disabled={pending} onClick={() => run(() => advanceStage(refId))}>Test mode: run the next automatic step</button>;
 }
 
-export function SetPrice({ refId, currency }: { refId: string; currency: string }) {
+export function SetPrice({ refId, currency, estimate, sent }: { refId: string; currency: string; estimate: number | null; sent: number | null }) {
   const { pending, err, run } = useAct();
   const [v, setV] = useState("");
   return (
     <div className="exc">
-      <h3 className="ah" style={{ marginTop: 8 }}>Set one final price</h3>
-      <p className="sub" style={{ fontSize: 13.5 }}>Outside automatic pricing. The client sees one final price and approves with one tap. Rounded up to 100.</p>
-      <div className="inline"><label className="fld">Price, {currency}<input inputMode="numeric" value={v} onChange={(e) => setV(e.target.value.replace(/\D/g, ""))} /></label>
-        <button className="mini" type="button" disabled={pending || !v} onClick={() => run(() => setAdvisorPrice(refId, +v))}>Set price and start sourcing</button></div>
+      <h3 className="ah" style={{ marginTop: 8 }}>Send one final price</h3>
+      <p className="sub" style={{ fontSize: 13.5 }}>
+        {estimate != null ? `Private member. They saw an estimate of ${estimate.toLocaleString("en-GB")} ${currency}. ` : "Priced personally. "}
+        {sent != null ? `Sent: ${sent.toLocaleString("en-GB")} ${currency}, awaiting the client's tap. ` : ""}
+        The client accepts or declines with one tap; once accepted it is fixed. Rounded up to 100.
+      </p>
+      <div className="inline"><label className="fld">Final price, {currency}<input inputMode="numeric" value={v} onChange={(e) => setV(e.target.value.replace(/\D/g, ""))} /></label>
+        <button className="mini" type="button" disabled={pending || !v} onClick={() => run(() => setAdvisorPrice(refId, +v))}>{sent != null ? "Send a new price" : "Send to the client"}</button></div>
       {err && <div className="err">{err}</div>}
     </div>
+  );
+}
+
+export function TierToggle({ memberId, tier, requested }: { memberId: string; tier: "private" | "assured"; requested: boolean }) {
+  const { pending, run } = useAct();
+  return (
+    <span className="tier-t">
+      <b>{tier === "assured" ? "Assured member" : "Private member"}</b>
+      {tier === "private" && requested && <span className="flag"> · asked for Assured</span>}
+      {" "}
+      <button className="so" type="button" disabled={pending} onClick={() => run(() => setMemberTier(memberId, tier === "assured" ? "private" : "assured"))}>
+        {tier === "assured" ? "Return to Private" : "Activate Assured"}
+      </button>
+    </span>
   );
 }
 

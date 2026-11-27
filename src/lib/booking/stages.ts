@@ -44,14 +44,15 @@ export const CLIENT_STEPS = [
 export type ClientStepKey = (typeof CLIENT_STEPS)[number]["key"];
 export type StepState = "done" | "now" | "todo";
 
-export function clientSteps(stage: number, paxComplete: boolean, briefSent: boolean): Record<ClientStepKey, StepState> {
+export function clientSteps(stage: number, paxComplete: boolean, briefSent: boolean, accepted = true): Record<ClientStepKey, StepState> {
   const at = (i: number): StepState => (stage > i ? "done" : stage === i ? "now" : "todo");
   return {
-    book: stage >= 1 ? "done" : "now",
-    ac: at(4) === "todo" && stage >= 1 ? "now" : at(4),
+    // "Booked" is done once the price is fixed: at booking for Assured, on acceptance for Private.
+    book: accepted ? "done" : "now",
+    ac: !accepted ? "todo" : at(4) === "todo" ? "now" : at(4),
     agr: stage > 5 ? "done" : "todo",
     pay: stage > 6 ? "done" : stage === 6 ? "now" : "todo",
-    pax: paxComplete ? "done" : stage >= 1 ? "now" : "todo",
+    pax: paxComplete ? "done" : "now",
     brief: briefSent || stage > 9 ? "done" : "todo",
     fly: stage > 10 ? "done" : "todo",
   };

@@ -17,6 +17,10 @@ export const members = pgTable("members", {
   mandateUserAgent: text("mandate_user_agent"),
   mandateWithdrawnAt: timestamp("mandate_withdrawn_at", { withTimezone: true }),
   isDemo: boolean("is_demo").default(false).notNull(),
+  /** Private (free, estimate then one final price) or Assured (annual fee, guaranteed instant price). */
+  tier: text("tier").$type<"private" | "assured">().default("private").notNull(),
+  assuredRequestedAt: timestamp("assured_requested_at", { withTimezone: true }),
+  assuredSince: timestamp("assured_since", { withTimezone: true }),
   createdAt: created(),
 }, (t) => [uniqueIndex("members_phone_idx").on(t.phone)]);
 
@@ -78,7 +82,11 @@ export const bookings = pgTable("bookings", {
   /** Whole currency units. Null while the advisor prices it personally. */
   price: integer("price"),
   currency: text("currency").$type<"EUR" | "USD">().notNull(),
-  guarantee: text("guarantee").$type<"instant" | "with-aircraft">().notNull(),
+  guarantee: text("guarantee").$type<"estimate" | "instant" | "with-aircraft">().notNull(),
+  /** Private members: the estimate shown when they asked. Never binding. */
+  estimate: integer("estimate"),
+  /** When the client accepted the final price (Assured: at booking). From then on the price is fixed. */
+  priceAcceptedAt: timestamp("price_accepted_at", { withTimezone: true }),
   priceValidUntil: timestamp("price_valid_until", { withTimezone: true }),
   stage: integer("stage").default(2).notNull(),
   needsAdvisor: text("needs_advisor"),

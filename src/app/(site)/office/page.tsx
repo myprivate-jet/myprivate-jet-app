@@ -9,6 +9,7 @@ import { profilePct } from "@/lib/booking/profile";
 import { Flights } from "@/components/office/Flights";
 import { Desk } from "@/components/office/Desk";
 import { OfficeHead } from "@/components/office/OfficeHead";
+import { MembershipCard } from "@/components/office/Membership";
 import { JoinGate } from "@/components/office/JoinGate";
 import { SignOut } from "@/components/office/SignOut";
 
@@ -34,7 +35,9 @@ export default async function Office({ searchParams }: { searchParams: Promise<{
       <div className="ogrid">
         <div className="card"><Flights flights={flights} highlight={sp.new} /></div>
         <div className="card">
-          <h4>Your standards</h4>
+          <h4>Your membership</h4>
+          <MembershipCard tier={m.tier} requested={Boolean(m.assuredRequestedAt)} />
+          <h4 style={{ marginTop: 24 }}>Your standards</h4>
           <div className="prefs">{prefs.flatMap(([k, v]) => [<span key={k}>{k}</span>, <span key={k + "-v"}>{v}</span>])}</div>
           <p className="sub" style={{ margin: "14px 0 0", fontSize: 13 }}>Your advisor applies these to every request, so you never repeat them.</p>
           <div className="pm" style={{ marginTop: 18 }}><div className="meter"><span style={{ width: `${pct}%` }} /></div><span>Profile {pct}% complete · <Link className="so" href="/office/profile">Complete when you have time</Link></span></div>

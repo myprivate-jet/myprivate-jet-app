@@ -631,3 +631,37 @@ footer{border-top:0;margin-top:120px;text-align:center}
 .cl li.now .dot{border-color:var(--navy)}
 .ask.embedded{margin:0;padding-top:8px}
 .desk{border-radius:var(--r);overflow:hidden;border:0}
+/* Membership levels */
+.article h1{font-weight:700;letter-spacing:-.035em}
+.article.wide{max-width:880px}
+.est{align-self:flex-start;margin-top:18px;font-size:12.5px;font-weight:700;color:var(--gold);background:var(--gold-soft);border-radius:999px;padding:3px 10px}
+.est+.big{margin-top:8px!important}
+.tap-note{margin:10px 0 0;font-size:13px;color:var(--muted);text-align:center}
+.upsell{display:grid;gap:2px;margin-top:16px;padding:16px 20px;border-radius:18px;background:var(--navy);color:var(--ivory);text-decoration:none}
+.upsell b{font-size:15px}
+.upsell span{font-size:13.5px;color:color-mix(in srgb,var(--ivory) 75%,transparent)}
+.mini-terms{margin:14px auto 0;text-align:center}
+.mini-terms ol{text-align:left}
+.accept{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.level{display:grid;gap:8px}
+.lv-h{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink)}
+.lv-badge{font-size:12.5px;font-weight:700;border-radius:999px;padding:3px 10px;background:var(--quiet);color:var(--navy)}
+.level.assured .lv-badge{background:var(--navy);color:var(--ivory)}
+.lv-p{margin:0;font-size:13.5px;color:var(--muted)}
+.lv-a{display:flex;gap:14px;align-items:center}
+.levels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:8px 0 40px}
+@media (max-width:700px){.levels{grid-template-columns:1fr}}
+.lvl{background:var(--paper);border-radius:28px;padding:clamp(22px,4vw,32px);box-shadow:var(--lift);display:flex;flex-direction:column;gap:6px}
+.lvl.assured{background:var(--navy);color:var(--ivory)}
+.lvl-n{font-size:14px;font-weight:700;color:var(--gold)}
+.lvl-p{font:700 clamp(32px,5vw,44px)/1.05 var(--display);letter-spacing:-.04em;color:inherit}
+.lvl.private .lvl-p{color:var(--navy)}
+.lvl-l{margin:6px 0 4px;font-size:15px;color:inherit;opacity:.85}
+.lvl ul{margin:6px 0 18px;padding:0;list-style:none;display:grid;gap:8px;font-size:14px;flex:1}
+.lvl li::before{content:"✓  ";color:var(--gold);font-weight:700}
+.lvl .go{display:grid;place-items:center;text-decoration:none;margin-top:auto}
+.lvl.assured .go{background:var(--ivory);color:var(--navy)}
+.go.ghost{background:transparent;color:var(--navy);box-shadow:inset 0 0 0 1.5px var(--line)}
+.lvl.assured .level .lv-p,.lvl.assured .lv-h{color:var(--ivory)}
+.lvl.assured .mini{background:var(--ivory);color:var(--navy)}
+.lvl.assured .so{color:var(--ivory)}

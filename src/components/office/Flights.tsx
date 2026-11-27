@@ -4,15 +4,19 @@ import { useRouter } from "next/navigation";
 import { CLIENT_STEPS, type ClientStepKey, type StepState } from "@/lib/booking/stages";
 import type { ClientFlight } from "@/lib/booking/view";
 import { addDays, longDate, money, shortDate } from "@/lib/format";
-import { payBooking, savePassengers } from "@/server/actions/member";
+import { acceptPrice, declinePrice, payBooking, savePassengers } from "@/server/actions/member";
 import { Modal } from "../MembershipDialog";
 
-const priceText = (x: ClientFlight) => (x.price != null ? money(x.price, x.currency) : "Being priced");
+const priceText = (x: ClientFlight) =>
+  x.price != null ? money(x.price, x.currency) : x.estimate != null ? `About ${money(x.estimate, x.currency)}` : "Being priced";
 
 function stepSub(x: ClientFlight, k: ClientStepKey, st: StepState) {
   const P = priceText(x);
   switch (k) {
-    case "book": return x.price === null ? "Your advisor sets one final price within 2 hours." : "Your price is final.";
+    case "book":
+      if (x.priceState === "fixed") return x.guarantee === "estimate" ? "You accepted this price. It is fixed." : "Your Assured Price. It is fixed.";
+      if (x.priceState === "offered") return x.declined ? "You declined this price. Your advisor will be in touch; nothing is owed." : `Your final price: ${money(x.price!, x.currency)}, all-inclusive. Accept it with one tap.`;
+      return x.estimate != null ? `Estimated at ${money(x.estimate, x.currency)}. Your advisor sends one final price within 2 hours.` : "Your advisor sends one final price within 2 hours.";
     case "ac": return st === "done" ? `${x.aircraft ?? "Aircraft"}. Registration, operator and crew on file.` : st === "now" ? "We confirm within 2 hours. If this standard isn't available at your price, you choose with one tap. Nothing is payable before." : "Within 2 hours of booking.";
     case "agr": return st === "done" ? "Signed on your behalf under your membership mandate. Nothing for you to sign." : "Signed for you once the aircraft is confirmed. Nothing for you to sign.";
     case "pay": return st === "done" ? "Received. Thank you." : st === "now" ? `${P}${x.payBy ? `, by ${shortDate(x.payBy)}` : ""}. Bank transfer or card. You pay us only; we pay the operator.` : "Requested once your aircraft is confirmed.";
@@ -44,13 +48,14 @@ export function Flights({ flights, demo = false, highlight, past }: { flights: C
           <ol className="cl">
             {CLIENT_STEPS.map(({ key, name }) => {
               const st = x.steps[key];
-              const mine = (key === "pay" && st === "now") || (key === "pax" && st !== "done");
+              const mine = (key === "pay" && st === "now") || (key === "pax" && st !== "done") || (key === "book" && x.priceState === "offered" && !x.declined);
               return (
                 <li className={st} key={key}>
                   <span className="dot" aria-hidden="true" />
                   <div>
                     <div className="cn">{name}{mine && <span className="yours">Your step</span>}</div>
                     <div className="cs">{stepSub(x, key, st)}</div>
+                    {key === "book" && x.priceState === "offered" && !x.declined && <PriceAnswer f={x} demo={demo} />}
                     {key === "pay" && st === "now" && <button className="mini" type="button" onClick={() => setSheet({ kind: "pay", f: x })}>Pay now</button>}
                     {key === "pax" && st !== "done" && <button className="mini ghost" type="button" onClick={() => setSheet({ kind: "pax", f: x })}>Add names and passports</button>}
                     {key === "brief" && st === "done" && x.brief && <button className="mini ghost" type="button" onClick={() => setSheet({ kind: "brief", f: x })}>Open the flight brief</button>}
@@ -78,6 +83,27 @@ export function Flights({ flights, demo = false, highlight, past }: { flights: C
       {sheet?.kind === "pax" && <PaxSheet f={sheet.f} demo={demo} onClose={() => setSheet(null)} />}
       {sheet?.kind === "brief" && <BriefSheet f={sheet.f} onClose={() => setSheet(null)} />}
     </>
+  );
+}
+
+function PriceAnswer({ f, demo }: { f: ClientFlight; demo: boolean }) {
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
+  async function run(fn: (ref: string) => Promise<{ ok: boolean; error?: string }>) {
+    if (demo) return setMsg("Demo: nothing is changed.");
+    setBusy(true);
+    const r = await fn(f.ref);
+    setBusy(false);
+    if (!r.ok) return setMsg(r.error ?? "Please try again.");
+    router.refresh();
+  }
+  return (
+    <div className="accept">
+      <button className="mini" type="button" disabled={busy} onClick={() => run(acceptPrice)}>Accept {money(f.price!, f.currency)}</button>
+      <button className="mini ghost" type="button" disabled={busy} onClick={() => run(declinePrice)}>Decline</button>
+      {msg && <span className="cs">{msg}</span>}
+    </div>
   );
 }
 

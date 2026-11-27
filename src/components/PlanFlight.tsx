@@ -7,7 +7,7 @@ import { openChat } from "./ChatWidget";
 import { ORDER, STANDARDS, type StandardId } from "@/lib/pricing/standards";
 import type { QuoteResult } from "@/lib/pricing/engine";
 import { BOOKING_TERMS } from "@/lib/booking/terms";
-import { boldSegments, longDate, money } from "@/lib/format";
+import { boldSegments, money } from "@/lib/format";
 import { bookFlight } from "@/server/actions/member";
 import { track } from "@/lib/analytics";
 
@@ -60,11 +60,9 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
   const [q, setQ] = useState<QuoteResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
-  const [review, setReview] = useState(false);
   const [more, setMore] = useState(false);
   const [gate, setGate] = useState<null | (() => void)>(null);
   const [booking, setBooking] = useState(false);
-  const reviewRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
 
   const req = useMemo(() => ({ from: from ?? "", to: to ?? "", date, time, pax, ret, rdate: ret ? rdate : "", bags, standUp, attendant, pets, pick }), [from, to, date, time, pax, ret, rdate, bags, standUp, attendant, pets, pick]);
@@ -99,7 +97,7 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
 
   const [fromKnown, setFromKnown] = useState(Boolean(initial));
   const [done, setDone] = useState(Boolean(initial));
-  const go = (s: Step) => { setStep(s); setReview(false); if (s === "answer") setDone(true); topRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }); };
+  const go = (s: Step) => { setStep(s); if (s === "answer") setDone(true); topRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }); };
   /** After an answer: the next unanswered question, or straight back to the price once everything is known. */
   const next = (after: Step) => {
     if (done) return go("answer");
@@ -112,9 +110,10 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
   const tripLine = q ? `${q.trip.fromCity} to ${q.trip.toCity}, ${q.trip.date} at ${q.trip.time}, ${q.trip.pax} guests${q.shown ? `, ${STANDARDS[q.shown].name}` : ""}` : "No trip chosen yet";
   const chat = () => openChat({ context: tripLine });
 
+  /** One tap. Private: a free, non-binding request for the final price. Assured: the booking itself. */
   function confirm() {
-    track("confirm_clicked", { standard: q?.shown ?? "advisor" });
-    gated(() => { setReview(true); setTimeout(() => reviewRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 50); });
+    track("confirm_clicked", { standard: q?.shown ?? "advisor", tier: q?.tier ?? "guest" });
+    gated(() => { void book(); });
   }
 
   async function book() {
@@ -214,12 +213,17 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
             <div className="card-a"><p className="why">{err || (ready ? "Pricing your flight…" : "Choose both airports to see your price.")}</p></div>
           ) : shown && shownPrice ? (
             <div className="card-a">
-              <div className="eyebrow">{shown === q.recommended ? "We recommend" : "Your choice"}</div>
+              <div className="eyebrow">{q.guarantee === "estimate" ? (shown === q.recommended ? "We recommend" : "Your choice") : "Your Assured Price"}</div>
               <div className="std">{STANDARDS[shown].name}</div>
+              {q.guarantee === "estimate" && <span className="est">Estimate</span>}
               <div className="big">{money(shownPrice, q.trip.cur)}</div>
-              <div className="final">{q.trip.ret ? "Return" : "One way"} · final · all-inclusive{q.trip.route === "US" ? " · US taxes included" : ""}</div>
+              <div className="final">
+                {q.trip.ret ? "Return" : "One way"} · all-inclusive{q.trip.route === "US" ? " · US taxes included" : ""}
+                {q.guarantee === "estimate" ? " · your final price within 2 hours" : q.guarantee === "instant" ? " · guaranteed" : ` · inside ${q.notice} hours, confirmed with the aircraft`}
+              </div>
               <p className="why">{q.why}</p>
-              <button className="go" type="button" onClick={confirm}>Confirm this flight</button>
+              <button className="go" type="button" onClick={confirm} disabled={booking}>{booking ? "One moment…" : q.guarantee === "estimate" ? "Get my final price" : "Book now"}</button>
+              <p className="tap-note">{q.guarantee === "estimate" ? "Free and without commitment. Your advisor sends one final price; you accept it with one tap." : "One tap books it under your membership mandate. Nothing to pay until the aircraft is confirmed."}</p>
               <button className="talk" type="button" onClick={chat}>Ask your advisor first</button>
             </div>
           ) : q.advisorStandard ? (
@@ -227,7 +231,7 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
               <div className="eyebrow">Priced personally</div>
               <div className="std">{STANDARDS[q.advisorStandard].name}</div>
               <p className="why">{q.advisorReason}. Send it once: your advisor replies with one final price within 2 hours.</p>
-              <button className="go" type="button" onClick={confirm}>Send to your advisor</button>
+              <button className="go" type="button" onClick={confirm} disabled={booking}>{booking ? "One moment…" : "Send to your advisor"}</button>
               <button className="talk" type="button" onClick={chat}>Ask your advisor first</button>
             </div>
           ) : (
@@ -241,7 +245,7 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
           {q && (
             <>
               <div className="tweaks" aria-label="Anything special">
-                <button type="button" aria-pressed={ret} className={ret ? "on" : ""} onClick={() => { setRet(!ret); setReview(false); }}>Return</button>
+                <button type="button" aria-pressed={ret} className={ret ? "on" : ""} onClick={() => { setRet(!ret); }}>Return</button>
                 {ret && <label className="tw-date"><span className="visually">Return date</span><input type="date" value={rdate} min={date} onChange={(e) => e.target.value && setRdate(e.target.value)} /></label>}
                 <label className={`tw-sel ${bags !== "std" ? "on" : ""}`}><span className="visually">Luggage</span><select value={bags} onChange={(e) => setBags(e.target.value as Bags)}>{BAGS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label>
                 <button type="button" aria-pressed={standUp} className={standUp ? "on" : ""} onClick={() => setStandUp(!standUp)}>Stand-up cabin</button>
@@ -255,7 +259,7 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
                   const on = x === (shown ?? q.advisorStandard);
                   return (
                     <button key={x} type="button" className={`${on ? "on" : ""} ${s.st === "off" ? "off" : ""}`} aria-pressed={on} disabled={s.st === "off"} title={s.note ?? undefined}
-                      onClick={() => { setPick(x === q.recommended ? null : x); setReview(false); track("standard_selected", { standard: x }); }}>
+                      onClick={() => { setPick(x === q.recommended ? null : x); track("standard_selected", { standard: x }); }}>
                       <span className="n">{STANDARDS[x].name.replace(/^The /, "")}</span>
                       <span className="p">{s.st === "ok" && s.price ? money(s.price, q.trip.cur) : s.st === "adv" ? "On request" : "Not suited"}</span>
                     </button>
@@ -274,26 +278,17 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
             </>
           )}
 
+          {q && q.guarantee === "estimate" && shownPrice && (
+            <a className="upsell" href="/membership">
+              <b>Want this price guaranteed?</b>
+              <span>Assured members see a fixed price and book in one tap, any day of the year.</span>
+            </a>
+          )}
+          {q && <details className="terms bt mini-terms"><summary>Booking terms</summary><ol>{BOOKING_TERMS.map(([h, t]) => <li key={h}><b>{h}.</b> {t}</li>)}</ol><p className="fine">Draft for legal review.</p></details>}
+          {err && q && <div className="err" role="alert">{err}</div>}
+
           <div className="promise-line">{guestNote.promise.map(([b]) => <span key={b}>{b}</span>)}</div>
         </section>
-      )}
-
-      {review && q && (
-        <div className="sheet" role="region" aria-label="Review and book" ref={reviewRef}>
-          <div className="eyebrow">Review and book</div>
-          <h3>{shown ? STANDARDS[shown].name : q.advisorStandard ? STANDARDS[q.advisorStandard].name : "A group aircraft"}{shownPrice ? `, ${money(shownPrice, q.trip.cur)}` : ""}</h3>
-          <div className="rv">
-            <div><span>Trip</span>{q.trip.fromCity} to {q.trip.toCity}, {longDate(q.trip.date)} at {q.trip.time}, {q.trip.pax} guests{q.trip.ret && q.trip.rdate ? `, returning ${longDate(q.trip.rdate)}` : ""}</div>
-            <div><span>Price</span>{shownPrice ? `Final and all-inclusive: aircraft, crew, positioning, fees, catering${q.trip.route === "US" ? ", US taxes" : ""}.` : "Your advisor sets one final price within 2 hours. You approve it with one tap."}</div>
-            <div><span>Payment</span>Only once the aircraft is confirmed. You pay us; we pay the operator.</div>
-            <div><span>Assurance</span>{q.guarantee === "with-aircraft" ? `${q.event ? `Peak date (${q.event.replace(/^the /, "")})` : "Within a week of departure"}: this price is confirmed together with the aircraft. If it has to change, you accept or decline with one tap.` : "Confirmed or free. If this standard isn't available at this price, you get a higher standard at the same price, or one new price to accept or decline."}</div>
-            <div><span>Cancellation</span>Free until the aircraft is confirmed.</div>
-          </div>
-          <details className="terms bt"><summary>Booking terms in full</summary><ol>{BOOKING_TERMS.map(([h, t]) => <li key={h}><b>{h}.</b> {t}</li>)}</ol><p className="fine">Draft for legal review.</p></details>
-          <p className="mand">By booking, you instruct MyPrivate-Jet under your membership mandate to contract this flight and sign the charter agreement for you.</p>
-          <div className="err" role="alert">{err}</div>
-          <button className="go" type="button" onClick={book} disabled={booking}>{booking ? "Booking…" : shownPrice ? "Book this flight" : "Send to your advisor"}</button>
-        </div>
       )}
 
       {!member && (

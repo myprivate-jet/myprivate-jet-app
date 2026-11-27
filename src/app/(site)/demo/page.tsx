@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Flights } from "@/components/office/Flights";
 import { Desk } from "@/components/office/Desk";
 import { OfficeHead } from "@/components/office/OfficeHead";
+import { MembershipCard } from "@/components/office/Membership";
 import { demoFlights, demoPast, DEMO_PREFS } from "@/lib/demo";
 
 export const metadata: Metadata = {
@@ -20,7 +21,9 @@ export default function Demo() {
       <div className="ogrid">
         <div className="card"><Flights flights={demoFlights()} demo past={demoPast()} /></div>
         <div className="card">
-          <h4>Your standards</h4>
+          <h4>Your membership</h4>
+          <MembershipCard tier={"assured"} requested={false} demo />
+          <h4 style={{ marginTop: 24 }}>Your standards</h4>
           <div className="prefs">{DEMO_PREFS.flatMap(([k, v]) => [<span key={k}>{k}</span>, <span key={k + "-v"}>{v}</span>])}</div>
           <p className="sub" style={{ margin: "14px 0 0", fontSize: 13 }}>Your advisor applies these to every request, so you never repeat them.</p>
           <h4 style={{ marginTop: 24 }}>Your advisor</h4>

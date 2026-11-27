@@ -1,7 +1,7 @@
 import "server-only";
 import { z } from "zod";
 import { airport } from "./airports";
-import { makeTrip, quote, type Trip } from "./engine";
+import { makeTrip, quote, type Tier, type Trip } from "./engine";
 import { isStandardId, type StandardId } from "./standards";
 
 export const tripSchema = z.object({
@@ -27,9 +27,9 @@ export function buildTrip(req: TripRequest): Trip | null {
   return makeTrip({ ...req, rdate: req.rdate || undefined }, a, b);
 }
 
-export function quoteFor(req: TripRequest) {
+export function quoteFor(req: TripRequest, tier: Tier = "guest") {
   const t = buildTrip(req);
   if (!t) return null;
   const pick: StandardId | null = isStandardId(req.pick) ? req.pick : null;
-  return quote(t, pick);
+  return quote(t, pick, new Date(), tier);
 }

@@ -7,13 +7,13 @@ import { ARTICLES, FAQ } from "@/content/articles";
 export function GET() {
   const body = `# MyPrivate-Jet
 
-> Premium private jet charter. For each trip we recommend one cabin standard and give one final, all-inclusive price (the Assured Price). Free membership; a Dedicated Advisor arranges every flight with audited operators, acting as the client's agent. Not a marketplace: no operator lists, no competing quotes.
+> Premium private jet charter. For each trip we recommend one cabin standard and give one all-inclusive price. Free Private membership or Assured membership with guaranteed prices; a Dedicated Advisor arranges every flight with audited operators, acting as the client's agent. Not a marketplace: no operator lists, no competing quotes.
 
 ## Key facts
 - Price: one final, all-inclusive price per trip (aircraft, crew, positioning, fees, catering; US federal taxes on US domestic flights).
 - Payment only after the aircraft is confirmed (aim: within 2 hours of booking). Client pays MyPrivate-Jet; MyPrivate-Jet pays the operator.
 - If no aircraft of the booked standard is available at the price: a higher standard at the same price, or one new price the client may decline at no cost.
-- Within 7 days of departure and on peak dates, the price is confirmed together with the aircraft.
+- Two membership levels. Private (free): the price shown is an estimate; the advisor sends one final, all-inclusive price within 2 hours, accepted with one tap and fixed from then on. Assured (annual fee): the price shown is guaranteed, fixed for 12 months, any day including peak dates, with 72 hours' notice in Europe (96 hours elsewhere), booked in one tap, with a 24/7 advisor line; if we cannot fly the member at that price, the fee is refunded. Details: ${SITE.url}/membership
 - Regions: ${SITE.areaServed.join(", ")}.
 
 ## Cabin standards

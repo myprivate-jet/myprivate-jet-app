@@ -111,10 +111,13 @@ export async function bookFlight(req: TripRequest): Promise<Result<{ ref: string
   const m = await requireMember();
   const parsed = tripSchema.safeParse(req);
   if (!parsed.success) return { ok: false, error: "Please check the trip details." };
-  const q = quoteFor(parsed.data);
+  const q = quoteFor(parsed.data, m.tier);
   if (!q) return { ok: false, error: "Please choose both airports." };
   const std = q.shown ?? q.advisorStandard ?? "large";
-  const priced = q.shown ? q.standards[q.shown].price : null;
+  const computed = q.shown ? q.standards[q.shown].price : null;
+  // Assured: the price on screen is the price, accepted by booking. Private: an estimate; the advisor sends the final price.
+  const assured = q.tier === "assured" && computed != null;
+  const priced = assured ? computed : null;
   const payBy = addDays(q.trip.date, -5) < todayISO() ? todayISO() : addDays(q.trip.date, -5);
   const ref = newRef();
   const [b] = await db()
@@ -123,12 +126,19 @@ export async function bookFlight(req: TripRequest): Promise<Result<{ ref: string
       ref, memberId: m.id, fromIcao: q.trip.from, toIcao: q.trip.to, date: q.trip.date, time: q.trip.time,
       returnDate: q.trip.ret ? q.trip.rdate || null : null, pax: q.trip.pax, luggage: parsed.data.bags,
       standUp: parsed.data.standUp, attendant: parsed.data.attendant, pets: parsed.data.pets,
-      standard: std, price: priced, currency: q.trip.cur, guarantee: q.guarantee,
+      standard: std, price: priced, estimate: assured ? null : computed, currency: q.trip.cur, guarantee: q.guarantee,
+      priceAcceptedAt: assured ? new Date() : null,
       priceValidUntil: new Date(Date.now() + 24 * 36e5), payBy,
-      stage: priced ? 4 : 1,
-      needsAdvisor: priced ? "Choose the aircraft" : "Price personally",
-      sla: `Within ${CONFIRM_HOURS} h of booking`,
-      flags: [q.event ? `Peak: ${q.event}` : null, q.guarantee === "with-aircraft" ? "No instant guarantee: confirm price with the aircraft" : null, parsed.data.bags !== "std" ? `Luggage: ${parsed.data.bags}` : null, parsed.data.pets ? "Pets in cabin" : null].filter(Boolean) as string[],
+      stage: assured ? 4 : 0,
+      needsAdvisor: assured ? "Choose the aircraft" : "Send the final price",
+      sla: `Within ${CONFIRM_HOURS} h of the request`,
+      flags: [
+        assured ? "Assured member: price guaranteed" : "Private member: estimate only",
+        q.event ? `Peak: ${q.event}` : null,
+        q.guarantee === "with-aircraft" ? `Inside ${q.notice} h notice: confirm price with the aircraft` : null,
+        parsed.data.bags !== "std" ? `Luggage: ${parsed.data.bags}` : null,
+        parsed.data.pets ? "Pets in cabin" : null,
+      ].filter(Boolean) as string[],
     })
     .returning();
   await db().insert(passengers).values(Array.from({ length: b.pax }, (_, i) => ({ bookingId: b.id, seat: i + 1, fullName: i === 0 ? `${m.firstName} ${m.lastName}` : null })));
@@ -139,16 +149,57 @@ export async function bookFlight(req: TripRequest): Promise<Result<{ ref: string
     aiNote: "Prepared automatically. Operator email is not connected yet, so nothing was sent.", status: "queued",
   });
   // Until operator RFQs are connected, sample offers keep the advisor flow testable.
-  if (priced && simulationsAllowed()) {
-    const rows = sampleOffers(b);
-    await db().insert(offers).values(rows.map((o) => ({ ...o, bookingId: b.id })));
-    if (!rows.some((o) => o.audited && o.cost <= priced)) {
-      await db().update(bookings).set({ exception: true, needsAdvisor: "No offer at or below our price" }).where(eq(bookings.id, b.id));
-    }
-  }
-  await audit("member", "booking.created", { bookingId: b.id, memberId: m.id }, { price: priced, currency: b.currency, standard: std, mandate: "instructed under membership mandate" });
+  await addSampleOffers(b, priced ?? computed);
+  await audit("member", "booking.created", { bookingId: b.id, memberId: m.id }, { tier: q.tier, price: priced, estimate: assured ? null : computed, currency: b.currency, standard: std, mandate: "instructed under membership mandate" });
   revalidatePath("/office");
   return { ok: true, ref };
+}
+
+async function addSampleOffers(b: typeof bookings.$inferSelect, ceiling: number | null) {
+  if (ceiling == null || !simulationsAllowed()) return;
+  const rows = sampleOffers(b);
+  await db().insert(offers).values(rows.map((o) => ({ ...o, bookingId: b.id })));
+  if (b.priceAcceptedAt && !rows.some((o) => o.audited && o.cost <= ceiling)) {
+    await db().update(bookings).set({ exception: true, needsAdvisor: "No offer at or below our price" }).where(eq(bookings.id, b.id));
+  }
+}
+
+/** Private members: accept the advisor's final price with one tap. From here the price is fixed. */
+export async function acceptPrice(ref: string): Promise<Result> {
+  const m = await requireMember();
+  const b = await ownBooking(ref, m.id);
+  if (b.price == null || b.priceAcceptedAt) return { ok: false, error: "There is no new price to accept." };
+  if (b.priceValidUntil && b.priceValidUntil < new Date()) return { ok: false, error: "This price has expired. Your advisor will send a fresh one." };
+  const [o] = await db().select({ id: offers.id }).from(offers).where(eq(offers.bookingId, b.id)).limit(1);
+  const [u] = await db().update(bookings).set({ priceAcceptedAt: new Date(), stage: 4, needsAdvisor: "Choose the aircraft", sla: `Within ${CONFIRM_HOURS} h of acceptance`, waitingOn: null, updatedAt: new Date() }).where(eq(bookings.id, b.id)).returning();
+  if (!o) await addSampleOffers(u, u.price);
+  await audit("member", "price.accepted", { bookingId: b.id, memberId: m.id }, { price: b.price, currency: b.currency, mandate: "instructed under membership mandate" });
+  revalidatePath("/office");
+  return { ok: true };
+}
+
+/** Private members: decline the final price. Nothing is owed. */
+export async function declinePrice(ref: string): Promise<Result> {
+  const m = await requireMember();
+  const b = await ownBooking(ref, m.id);
+  if (b.price == null || b.priceAcceptedAt) return { ok: false, error: "There is no new price to decline." };
+  await db().update(bookings).set({ needsAdvisor: "Client declined the final price", waitingOn: null, updatedAt: new Date() }).where(eq(bookings.id, b.id));
+  await audit("member", "price.declined", { bookingId: b.id, memberId: m.id }, { price: b.price });
+  revalidatePath("/office");
+  return { ok: true };
+}
+
+/** Ask to become an Assured member. The advisor confirms the fee and activates it. */
+export async function requestAssured(): Promise<Result> {
+  const m = await requireMember();
+  if (m.tier === "assured") return { ok: true };
+  if (!m.assuredRequestedAt) {
+    await db().update(members).set({ assuredRequestedAt: new Date() }).where(eq(members.id, m.id));
+    await db().insert(chatMessages).values({ memberId: m.id, author: "member", body: "I would like to become an Assured member.", context: "Membership: request for Assured" });
+    await audit("member", "assured.requested", { memberId: m.id });
+  }
+  revalidatePath("/office");
+  return { ok: true };
 }
 
 async function ownBooking(ref: string, memberId: string) {
