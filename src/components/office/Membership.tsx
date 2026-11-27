@@ -4,9 +4,10 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { LEVELS, type Level } from "@/lib/membership";
 import { requestAssured } from "@/server/actions/member";
+import { AssuredCard } from "../AssuredCard";
 
 /** The member's level, and the one-tap path from Private to Assured. */
-export function MembershipCard({ tier, requested, demo = false }: { tier: Level; requested: boolean; demo?: boolean }) {
+export function MembershipCard({ tier, requested, demo = false, holder }: { tier: Level; requested: boolean; demo?: boolean; holder?: string }) {
   const [asked, setAsked] = useState(requested);
   const [pending, start] = useTransition();
   const router = useRouter();
@@ -27,6 +28,7 @@ export function MembershipCard({ tier, requested, demo = false }: { tier: Level;
           </>
         )
       )}
+      {tier === "assured" && <AssuredCard holder={holder} />}
       {tier === "assured" && <p className="lv-p">Fixed for 12 months, any day, with 72 hours&apos; notice in Europe. A 24/7 line to your advisor.</p>}
     </div>
   );

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { Crumbs } from "@/components/Crumbs";
 import { JsonLd } from "@/components/JsonLd";
 import { MembershipCard } from "@/components/office/Membership";
-import { LEVELS, ASSURED_FEE } from "@/lib/membership";
+import { LEVELS, ASSURED_FEE, FEE_BACK } from "@/lib/membership";
+import { AssuredCard } from "@/components/AssuredCard";
 import { SITE } from "@/lib/site";
 import { currentMember } from "@/server/auth/session";
 
@@ -25,13 +26,14 @@ export default async function Membership() {
         ],
       }} />
       <Crumbs items={[["/", "Home"], ["/membership", "Membership"]]} />
-      <h1>Two ways to fly with us.</h1>
-      <p className="lede">Both give you one recommended cabin, one all-inclusive price and one Dedicated Advisor. The difference is when the price becomes final.</p>
+      <h1>Above the rest. By design.</h1>
+      <p className="lede">Someone will always fly for less. We are not that company. We do not run auctions or forward you the cheapest bid: we recommend one cabin, fly it with audited operators, and put one advisor on your side from the first question to landing. Two memberships; the difference is when the price becomes a promise.</p>
       <div className="levels">
         {(["private", "assured"] as const).map((k) => {
           const L = LEVELS[k];
           return (
             <section key={k} className={`lvl ${k}`}>
+              {k === "assured" && <AssuredCard size="lg" holder={m ? `${m.firstName} ${m.lastName}` : undefined} />}
               <div className="lvl-n">{L.name}</div>
               <div className="lvl-p">{L.price}</div>
               <p className="lvl-l">{L.line}</p>
@@ -47,9 +49,11 @@ export default async function Membership() {
           );
         })}
       </div>
+      <h2>The fee-back promise</h2>
+      <p>{FEE_BACK.text}</p>
       <h2>In one example</h2>
       <p>Four guests, Geneva to Nice on a Friday in June. A Private member sees the price at once, marked as an estimate, and receives the final price from their advisor within 2 hours, then accepts it with one tap. An Assured member sees the same figure marked as guaranteed and books it on the spot, even on Grand Prix weekend.</p>
-      <p className="fine">The Assured fee and the fee-back promise are proposals pending final approval. Membership Terms are a draft for legal review.</p>
+      <p className="fine">The fee-back wording is being finalised. Membership Terms are a draft for legal review.</p>
     </div>
   );
 }

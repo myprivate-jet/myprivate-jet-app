@@ -36,7 +36,7 @@ export default async function Office({ searchParams }: { searchParams: Promise<{
         <div className="card"><Flights flights={flights} highlight={sp.new} /></div>
         <div className="card">
           <h4>Your membership</h4>
-          <MembershipCard tier={m.tier} requested={Boolean(m.assuredRequestedAt)} />
+          <MembershipCard tier={m.tier} requested={Boolean(m.assuredRequestedAt)} holder={`${m.firstName} ${m.lastName}`} />
           <h4 style={{ marginTop: 24 }}>Your standards</h4>
           <div className="prefs">{prefs.flatMap(([k, v]) => [<span key={k}>{k}</span>, <span key={k + "-v"}>{v}</span>])}</div>
           <p className="sub" style={{ margin: "14px 0 0", fontSize: 13 }}>Your advisor applies these to every request, so you never repeat them.</p>

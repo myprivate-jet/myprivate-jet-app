@@ -1,8 +1,16 @@
 /**
- * The two membership levels (decided 2026-11-27). The Assured fee is a proposal until approved.
+ * The two membership levels (decided 2026-11-27). Fee and 96-hour notice approved by Pascal 2026-11-27;
+ * the fee-back wording is still being finalised (FEE_BACK.status).
  * Shared by the public page, the price card, the Office and llms.txt, so the promise reads the same everywhere.
  */
-export const ASSURED_FEE = { amount: 15000, currency: "EUR", label: "€15,000 a year", status: "proposal" as const };
+export const ASSURED_FEE = { amount: 15000, currency: "EUR", label: "€15,000 a year", status: "approved" as const };
+
+/** The fee-back promise in plain words. Wording awaiting final approval. */
+export const FEE_BACK = {
+  status: "draft" as const,
+  short: "If we ever fail you, the whole year's fee comes back",
+  text: "If, on any request made with the required notice, we cannot fly you in your standard at your Assured Price, your whole annual fee is refunded: in money, not as a credit. And we still find you an aircraft, at one new price you are free to decline.",
+};
 
 export const LEVELS = {
   private: {
@@ -25,7 +33,7 @@ export const LEVELS = {
       "The price on screen is guaranteed, not an estimate",
       "Prices fixed for 12 months, peak dates included",
       "Book in one tap with 72 hours' notice in Europe (96 hours elsewhere)",
-      "If we cannot fly you at that price, your annual fee comes back",
+      "If we ever fail you, the whole year's fee comes back",
       "A 24/7 line to your Dedicated Advisor",
     ],
   },

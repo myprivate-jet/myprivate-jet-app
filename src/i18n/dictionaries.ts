@@ -16,7 +16,7 @@ const en = {
   promise: [
     ["One final price", "All-inclusive. It never moves."],
     ["Never a downgrade", "Same standard or higher, at our cost."],
-    ["Free to join", "Private membership is free. No deposit, no hours to buy."],
+    ["Audited operators only", "Never the cheapest bidder. Always a carrier we have checked."],
     ["One advisor", "From first question to landing."],
   ],
   chat: "Chat with your advisor",
@@ -36,7 +36,7 @@ const fr: Dict = {
   promise: [
     ["Un prix final", "Tout compris. Il ne bouge jamais."],
     ["Jamais de déclassement", "Même standard ou supérieur, à nos frais."],
-    ["Adhésion gratuite", "L'adhésion Private est gratuite. Ni acompte, ni heures à acheter."],
+    ["Opérateurs audités uniquement", "Jamais le moins-disant. Toujours un transporteur vérifié."],
     ["Un seul conseiller", "De la première question à l'atterrissage."],
   ],
   chat: "Écrire à votre conseiller",
@@ -55,7 +55,7 @@ const it: Dict = {
   promise: [
     ["Un prezzo finale", "Tutto incluso. Non cambia mai."],
     ["Mai un declassamento", "Stesso standard o superiore, a nostre spese."],
-    ["Adesione gratuita", "L'adesione Private è gratuita. Nessun deposito, nessuna ora da acquistare."],
+    ["Solo operatori verificati", "Mai il prezzo più basso. Sempre un vettore controllato."],
     ["Un solo consulente", "Dalla prima domanda all'atterraggio."],
   ],
   chat: "Scrivi al tuo consulente",
@@ -74,7 +74,7 @@ const ar: Dict = {
   promise: [
     ["سعر نهائي واحد", "شامل لكل شيء. لا يتغيّر أبداً."],
     ["لا تخفيض للمستوى أبداً", "المعيار نفسه أو أعلى، على نفقتنا."],
-    ["انضمام مجاني", "عضوية Private مجانية. لا عربون ولا ساعات للشراء."],
+    ["مشغّلون مدقَّقون فقط", "ليس الأرخص أبداً. دائماً ناقل تحقّقنا منه."],
     ["مستشار واحد", "من السؤال الأول حتى الهبوط."],
   ],
   chat: "تحدّث مع مستشارك",

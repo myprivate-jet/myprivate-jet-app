@@ -665,3 +665,32 @@ footer{border-top:0;margin-top:120px;text-align:center}
 .lvl.assured .level .lv-p,.lvl.assured .lv-h{color:var(--ivory)}
 .lvl.assured .mini{background:var(--ivory);color:var(--navy)}
 .lvl.assured .so{color:var(--ivory)}
+/* Bolder: manifesto, the Assured card, the Assured price card */
+.manifesto{margin-top:40px;display:grid;gap:8px}
+.manifesto p{margin:0;font:600 19px/1.35 var(--display);letter-spacing:-.015em;color:var(--navy)}
+.manifesto .m2{font:400 14.5px/1.6 var(--body);letter-spacing:0;color:var(--muted);max-width:46ch}
+.acard{position:relative;aspect-ratio:1.586;width:100%;max-width:340px;border-radius:18px;padding:7% 7.5%;display:flex;flex-direction:column;justify-content:space-between;color:#f4efe2;overflow:hidden;isolation:isolate;
+  background:radial-gradient(120% 140% at 0% 0%,#2b3654 0%,#121a2e 45%,#0a0f1c 100%);box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 20px 50px rgba(8,12,24,.35)}
+.acard::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(115deg,transparent 30%,rgba(214,180,110,.22) 48%,transparent 62%);mix-blend-mode:screen}
+.acard::after{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(214,180,110,.35)}
+.acard-top{display:flex;justify-content:space-between;align-items:center}
+.acard-brand{font:700 15px var(--display);letter-spacing:-.02em}
+.acard-brand b{color:#d6b46e}
+.acard-chip{width:38px;height:28px;border-radius:6px;background:linear-gradient(135deg,#e9cf92,#a8823a 60%,#e2c27e);box-shadow:inset 0 0 0 1px rgba(0,0,0,.2)}
+.acard-tier{font:700 clamp(26px,4vw,34px)/1 var(--display);letter-spacing:-.04em;color:#e9d3a0}
+.acard-foot{display:flex;justify-content:space-between;font-size:11.5px;letter-spacing:.06em;color:rgba(244,239,226,.75)}
+.acard-sm{max-width:118px;border-radius:9px;padding:9px 10px;flex:none}
+.acard-sm .acard-brand{font-size:8px}.acard-sm .acard-chip{width:16px;height:12px;border-radius:3px}
+.acard-sm .acard-tier{font-size:15px}.acard-sm .acard-foot{display:none}
+.acard-lg{max-width:100%;margin-bottom:18px}
+.lvl.assured .acard{box-shadow:0 1px 0 rgba(255,255,255,.08) inset,0 0 0 1px rgba(214,180,110,.25)}
+.upsell{grid-template-columns:auto 1fr;align-items:center;gap:16px}
+.up-t{display:grid;gap:2px}
+.level .acard{margin:6px 0 4px}
+.card-a.is-assured{background:radial-gradient(130% 120% at 0% 0%,#26304b 0%,#111829 50%,#0a0f1c 100%);color:#f4efe2;box-shadow:0 30px 70px rgba(8,12,24,.28),inset 0 0 0 1px rgba(214,180,110,.28)}
+.card-a.is-assured .eyebrow{color:#d6b46e}
+.card-a.is-assured .std,.card-a.is-assured .big{color:#f7f3ea}
+.card-a.is-assured .final,.card-a.is-assured .why,.card-a.is-assured .tap-note,.card-a.is-assured .talk{color:rgba(244,239,226,.72)}
+.card-a.is-assured .go{background:#f4efe2;color:#0e1526}
+.qh{font-size:clamp(48px,10vw,88px)}
+.lvl ul{align-content:start}

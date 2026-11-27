@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AirportInput, type AirportHit } from "./AirportInput";
+import { AssuredCard } from "./AssuredCard";
 import { MembershipDialog } from "./MembershipDialog";
 import { openChat } from "./ChatWidget";
 import { ORDER, STANDARDS, type StandardId } from "@/lib/pricing/standards";
@@ -203,7 +204,12 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
             </div>
           )}
 
-          {step === "to" && <p className="lede">One recommendation. One final price. Usually in four taps.</p>}
+          {step === "to" && (
+            <div className="manifesto">
+              <p>Tell us where. We take care of everything else.</p>
+              <p className="m2">Not a marketplace, not an auction, never the cheapest bidder. One advisor, audited operators, and a price you can hold us to.</p>
+            </div>
+          )}
         </section>
       )}
 
@@ -212,7 +218,7 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
           {!q ? (
             <div className="card-a"><p className="why">{err || (ready ? "Pricing your flight…" : "Choose both airports to see your price.")}</p></div>
           ) : shown && shownPrice ? (
-            <div className="card-a">
+            <div className={`card-a ${q.guarantee === "estimate" ? "" : "is-assured"}`}>
               <div className="eyebrow">{q.guarantee === "estimate" ? (shown === q.recommended ? "We recommend" : "Your choice") : "Your Assured Price"}</div>
               <div className="std">{STANDARDS[shown].name}</div>
               {q.guarantee === "estimate" && <span className="est">Estimate</span>}
@@ -280,8 +286,8 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
 
           {q && q.guarantee === "estimate" && shownPrice && (
             <a className="upsell" href="/membership">
-              <b>Want this price guaranteed?</b>
-              <span>Assured members see a fixed price and book in one tap, any day of the year.</span>
+              <AssuredCard size="sm" />
+              <span className="up-t"><b>Make this price a promise.</b><span>Assured members see it guaranteed and book in one tap, any day of the year.</span></span>
             </a>
           )}
           {q && <details className="terms bt mini-terms"><summary>Booking terms</summary><ol>{BOOKING_TERMS.map(([h, t]) => <li key={h}><b>{h}.</b> {t}</li>)}</ol><p className="fine">Draft for legal review.</p></details>}
