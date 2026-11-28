@@ -1020,11 +1020,34 @@ body{overflow-x:clip}
 .answer .vs{margin-top:22px}
 .clickwrap{margin-top:14px;line-height:1.5}
 
-/* Smaller / larger 2026-11-28: the two neighbouring suitable cabins, one tap to switch. */
-.card-a .alts{margin:22px -4px 0;border-top:1px solid color-mix(in srgb,currentColor 16%,transparent)}
-.card-a .alts button{font:inherit;display:flex;width:100%;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 4px;text-align:left;color:inherit;background:none;border:0;border-bottom:1px solid color-mix(in srgb,currentColor 16%,transparent);cursor:pointer}
-.card-a .alts .k{display:block;font-size:10px;letter-spacing:.2em;text-transform:uppercase;opacity:.6;margin-bottom:3px}
-.card-a .alts .n{display:block;font:400 14px/1.3 var(--serif);text-transform:uppercase;letter-spacing:.12em}
-.card-a .alts small{display:block;font-family:var(--sans,inherit);font-size:12px;opacity:.6;margin-top:2px}
-.card-a .alts .p{font:300 20px var(--serif);white-space:nowrap}
-.card-a .alts button:hover .n{text-decoration:underline;text-underline-offset:4px}
+/* Category cards 2026-11-28: we sell a category, never one model. A drawn side view on sky,
+   seats, time in the air, cabin height, three example aircraft. Neighbours are as rich as the main card. */
+.jet{display:block;width:100%;height:100%;position:relative;z-index:1;padding:8px 14px 0}
+.jet path,.jet ellipse{fill:rgba(255,255,255,.16);stroke:#fff;stroke-width:1.1;stroke-linejoin:round}
+.jet .win ellipse{fill:rgba(255,255,255,.75);stroke:none}
+.cv{position:relative;display:block;height:108px;background:url("/img/day.jpg") center 55%/cover;overflow:hidden}
+.cv::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(0,0,0,.18))}
+.cv .badge{background:none;border-radius:0;box-shadow:none;position:absolute;z-index:2;left:14px;top:12px;font-size:9.5px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:#fff;border:1px solid rgba(255,255,255,.7);padding:6px 8px}
+.card-a.rich{--p:clamp(28px,6vw,52px);padding-top:0}
+.card-a.rich .cv{margin:0 calc(var(--p) * -1) 22px;height:124px}
+.card-a.rich .go{margin-top:20px}
+.kf{display:grid;grid-template-columns:repeat(3,1fr);margin-top:18px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.kf div{padding:12px 6px 10px 0}
+.kf b{display:block;font:300 18px/1.15 var(--serif);letter-spacing:.02em}
+.kf span{font-size:11.5px;color:var(--muted)}
+.is-assured .kf{border-color:rgba(242,237,226,.16)}
+.is-assured .kf span{color:inherit;opacity:.65}
+.ex{display:block;font-size:13px;color:var(--muted);margin-top:12px;line-height:1.5}
+.alt-cards{display:grid;gap:14px;margin-top:30px}
+.alt-h{display:flex;justify-content:space-between;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase}
+.alt-h span+span{color:var(--muted)}
+.cc{display:block;width:100%;padding:0;text-align:left;font:inherit;color:var(--navy);background:var(--paper);border:1px solid var(--line);cursor:pointer;transition:border-color .25s}
+.cc:hover,.cc:focus-visible{border-color:var(--navy)}
+.cc .cb{display:block;padding:16px 18px 18px}
+.cc .k{display:block;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+.cc .nm{display:block;font:400 16px/1.3 var(--serif);text-transform:uppercase;letter-spacing:.14em;margin-top:6px}
+.cc .ln{display:block;font-size:13px;color:var(--muted);margin-top:4px}
+.cc .kf{margin-top:12px}
+.cc .pr{display:flex;justify-content:space-between;align-items:baseline;margin-top:14px}
+.cc .p{font:300 22px var(--serif)}
+.cc .ch{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;border-bottom:1px solid currentColor;padding-bottom:3px}

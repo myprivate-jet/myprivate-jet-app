@@ -34,7 +34,7 @@ export interface Standard {
 
 export const STANDARDS: Record<StandardId, Standard> = {
   reach: {
-    id: "reach", name: "The Reach", slug: "the-reach", examples: "Pilatus PC-12 NGX, Citation M2",
+    id: "reach", name: "The Reach", slug: "the-reach", examples: "Pilatus PC-12 NGX, Citation CJ3+, Phenom 100EV",
     maxPax: 6, screenKm: 1500, speed: 500, comfortH: 1.5, maxH: 2.5, height: "1.47 m", standUp: false,
     lavatory: "Not on every aircraft", attendant: false, hold: "Limited", wifi: "On some aircraft", skis: false,
     line: "Small airports and short hops.",
@@ -52,7 +52,7 @@ export const STANDARDS: Record<StandardId, Standard> = {
     line: "Stand-up cabin and a flat floor for longer days.",
   },
   large: {
-    id: "large", name: "Grand Cabin", slug: "grand-cabin", examples: "Falcon 2000LXS / 900LX, Challenger 650",
+    id: "large", name: "Grand Cabin", slug: "grand-cabin", examples: "Falcon 900LX, Challenger 650, Falcon 2000LXS",
     maxPax: 12, screenKm: 6500, speed: 850, comfortH: 8, maxH: 9, height: "1.88 m", standUp: true,
     lavatory: "Enclosed, with vanity", attendant: true, hold: "Very generous", wifi: "Yes", skis: true,
     line: "Room for a family and a cabin attendant.",

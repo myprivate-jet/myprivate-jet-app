@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AirportInput, type AirportHit } from "./AirportInput";
 import { Compare } from "./Compare";
+import { CabinCard, CabinFacts, CabinVisual, hm, suchAs } from "./CabinCard";
 import { DateCalendar } from "./DateCalendar";
 import { MembershipDialog } from "./MembershipDialog";
 import { openChat } from "./ChatWidget";
@@ -29,7 +30,6 @@ const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart
 const plus = (n: number, from = new Date()) => { const d = new Date(from); d.setDate(d.getDate() + n); return d; };
 const nextDow = (dow: number, min = 1) => { let d = plus(min); while (d.getDay() !== dow) d = plus(1, d); return d; };
 const dayLabel = (s: string) => new Date(s + "T12:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
-const hm = (h: number) => { const m = Math.round((h * 60) / 5) * 5; return m < 60 ? `${m} min` : `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, "0")}`; };
 
 function Rich({ s }: { s: string }) {
   return <>{boldSegments(s).map((p, i) => (p.b ? <b key={i}>{p.t}</b> : <span key={i}>{p.t}</span>))}</>;
@@ -258,7 +258,9 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
           {!q ? (
             <div className="card-a"><p className="why">{err || (ready ? "Pricing your flight…" : "Choose both airports to see your price.")}</p></div>
           ) : shown && shownPrice ? (
-            <div className={`card-a ${q.guarantee === "instant" ? "is-assured" : ""}`}>
+            <>
+            <div className={`card-a rich ${q.guarantee === "instant" ? "is-assured" : ""}`}>
+              <CabinVisual x={shown} recommended={shown === q.recommended} />
               <div className="eyebrow">{q.guarantee === "instant" ? "Your Assured Price" : shown === q.recommended ? "Recommended for you" : "Your choice"}</div>
               <div className="std">{STANDARDS[shown].name}</div>
               <div className="big">{money(shownPrice, q.trip.cur)}</div>
@@ -266,26 +268,28 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
                 {q.trip.ret ? "Return" : "One way"} · all-inclusive{q.trip.route === "US" ? " · US taxes included" : ""}
                 {q.guarantee === "instant" ? " · aircraft guaranteed" : " · firm"}
               </div>
-              <p className="why">{q.why}</p>
               <button className="go" type="button" onClick={confirm} disabled={booking}>{booking ? "One moment…" : "Book now"}</button>
+              <CabinFacts x={shown} hrs={q.standards[shown].hrs} />
+              <p className="why">{q.why}</p>
+              <p className="ex">{suchAs(shown)}. We sell the cabin, not one model: the exact aircraft is confirmed with its crew.</p>
               <NextSteps items={[
                 member ? "One tap books it, at this price." : "One tap books it. First time only: your name and mobile.",
                 q.guarantee === "instant" ? "Your guaranteed aircraft and crew, confirmed within 2 hours." : "We confirm your aircraft and crew within 2 hours.",
                 "Only then do you pay. If no aircraft can be confirmed, you pay nothing.",
               ]} />
               <button className="talk" type="button" onClick={chat}>Ask your advisor first</button>
-              {(smaller || larger) && (
-                <div className="alts" role="group" aria-label="A smaller or larger cabin">
-                  {([[smaller, "Smaller"], [larger, "Larger"]] as const).map(([x, k]) => x && (
-                    <button key={k} type="button" onClick={() => { setPick(x === q.recommended ? null : x); track("standard_selected", { standard: x }); }}>
-                      <span><span className="k">{k}</span><span className="n">{STANDARDS[x].name}</span><small>{STANDARDS[x].examples.split(", ").slice(0, 2).join(", ")}</small></span>
-                      <span className="p">{money(q.standards[x].price!, q.trip.cur)}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
               {q.tier === "assured" && q.guarantee !== "instant" && <p className="cmp">Inside {q.notice} hours your price stays firm; the aircraft is subject to availability.</p>}
             </div>
+            {(smaller || larger) && (
+              <div className="alt-cards" role="group" aria-label="A smaller or larger cabin">
+                <div className="alt-h"><span>Or, for this trip</span><span>One tap to switch</span></div>
+                {([[smaller, "Smaller"], [larger, "Larger"]] as const).map(([x, k]) => x && (
+                  <CabinCard key={k} x={x} tag={x === q.recommended ? "Recommended" : k} recommended={x === q.recommended} price={money(q.standards[x].price!, q.trip.cur)} hrs={q.standards[x].hrs}
+                    onChoose={() => { setPick(x === q.recommended ? null : x); track("standard_selected", { standard: x }); topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }} />
+                ))}
+              </div>
+            )}
+            </>
           ) : q.advisorStandard ? (
             <div className="card-a">
               <div className="eyebrow">Priced personally</div>
