@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AirportInput, type AirportHit } from "./AirportInput";
 import { AssuredCard } from "./AssuredCard";
+import { DateCalendar } from "./DateCalendar";
 import { LEVELS } from "@/lib/membership";
 import { MembershipDialog } from "./MembershipDialog";
 import { openChat } from "./ChatWidget";
@@ -58,6 +59,7 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
   const [toLabel, setToLabel] = useState(initial?.toLabel ?? "");
   const [date, setDate] = useState(defaultDate);
   const [time, setTime] = useState("10:00");
+  const [cal, setCal] = useState(false);
   const [pax, setPax] = useState(initial?.pax ?? 4);
   const [ret, setRet] = useState(false);
   const [rdate, setRdate] = useState(() => iso(plus(3, new Date(defaultDate + "T12:00"))));
@@ -196,12 +198,21 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
 
           {step === "when" && (
             <>
-              <div className="choices">
-                {[[iso(plus(1)), "Tomorrow"], [iso(nextDow(5)), "Friday"], [iso(plus(7)), "In a week"], [iso(plus(30)), "In a month"]].map(([d, l]) => (
-                  <button key={l} type="button" className={date === d ? "on" : ""} onClick={() => setDate(d)}>{l}<small>{dayLabel(d)}</small></button>
-                ))}
-                <label className="pickdate"><span>Another day</span><input type="date" aria-label="Departure date" value={date} min={iso(new Date())} onChange={(e) => e.target.value && setDate(e.target.value)} /></label>
-              </div>
+              {(() => {
+                const quick = [[iso(plus(1)), "Tomorrow"], [iso(nextDow(5)), "Friday"], [iso(plus(7)), "In a week"], [iso(plus(30)), "In a month"]];
+                const custom = !quick.some(([d]) => d === date);
+                return (
+                  <>
+                    <div className="choices when">
+                      {quick.map(([d, l]) => (
+                        <button key={l} type="button" className={date === d ? "on" : ""} onClick={() => { setDate(d); setCal(false); }}>{l}<small>{dayLabel(d)}</small></button>
+                      ))}
+                      <button type="button" className={`other ${custom ? "on" : ""}`} aria-expanded={cal} onClick={() => setCal(!cal)}>{custom ? dayLabel(date) : "Another date"}<small>{cal ? "Close" : custom ? "Change" : "Any day, up to a year ahead"}</small></button>
+                    </div>
+                    {cal && <DateCalendar value={date} min={iso(new Date())} onPick={(d) => { setDate(d); setCal(false); }} />}
+                  </>
+                );
+              })()}
               <div className="seg" role="radiogroup" aria-label="Time of departure">
                 {TIMES.map(([t, l]) => <button key={t} type="button" role="radio" aria-checked={time === t} className={time === t ? "on" : ""} onClick={() => setTime(t)}>{l}<small>{t}</small></button>)}
               </div>
