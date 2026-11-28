@@ -146,6 +146,11 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
 
   const shown = q?.shown ?? null;
   const shownPrice = shown && q ? q.standards[shown].price : null;
+  /** The nearest suitable, priced cabin below and above the one shown. Unsuitable cabins are never offered. */
+  const priced = (x: StandardId) => Boolean(q && q.standards[x].st === "ok" && q.standards[x].price);
+  const at = shown ? ORDER.indexOf(shown) : -1;
+  const smaller = at > 0 ? [...ORDER.slice(0, at)].reverse().find(priced) ?? null : null;
+  const larger = at >= 0 ? ORDER.slice(at + 1).find(priced) ?? null : null;
   const chips: [Step, string][] = [];
   const fromShown = Boolean(from && (fromKnown || step !== "from"));
   if (fromShown) chips.push(["from", fromLabel]);
@@ -254,7 +259,7 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
             <div className="card-a"><p className="why">{err || (ready ? "Pricing your flight…" : "Choose both airports to see your price.")}</p></div>
           ) : shown && shownPrice ? (
             <div className={`card-a ${q.guarantee === "instant" ? "is-assured" : ""}`}>
-              <div className="eyebrow">{q.guarantee === "instant" ? "Your Assured Price" : shown === q.recommended ? "Your price" : "Your choice"}</div>
+              <div className="eyebrow">{q.guarantee === "instant" ? "Your Assured Price" : shown === q.recommended ? "Recommended for you" : "Your choice"}</div>
               <div className="std">{STANDARDS[shown].name}</div>
               <div className="big">{money(shownPrice, q.trip.cur)}</div>
               <div className="final">
@@ -269,6 +274,16 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
                 "Only then do you pay. If no aircraft can be confirmed, you pay nothing.",
               ]} />
               <button className="talk" type="button" onClick={chat}>Ask your advisor first</button>
+              {(smaller || larger) && (
+                <div className="alts" role="group" aria-label="A smaller or larger cabin">
+                  {([[smaller, "Smaller"], [larger, "Larger"]] as const).map(([x, k]) => x && (
+                    <button key={k} type="button" onClick={() => { setPick(x === q.recommended ? null : x); track("standard_selected", { standard: x }); }}>
+                      <span><span className="k">{k}</span><span className="n">{STANDARDS[x].name}</span><small>{STANDARDS[x].examples.split(", ").slice(0, 2).join(", ")}</small></span>
+                      <span className="p">{money(q.standards[x].price!, q.trip.cur)}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
               {q.tier === "assured" && q.guarantee !== "instant" && <p className="cmp">Inside {q.notice} hours your price stays firm; the aircraft is subject to availability.</p>}
             </div>
           ) : q.advisorStandard ? (
@@ -306,7 +321,7 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
               </div>
 
               <div className="others" role="group" aria-label="The five cabin standards">
-                {ORDER.map((x) => {
+                {ORDER.filter((x) => q.standards[x].st !== "off").map((x) => {
                   const s = q.standards[x];
                   const on = x === (shown ?? q.advisorStandard);
                   return (
