@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Crumbs } from "@/components/Crumbs";
-import { MANDATE_POINTS, MANDATE_TICK, TERMS_VERSION, BOOKING_TERMS } from "@/lib/booking/terms";
+import { MANDATE_CLICK, MANDATE_POINTS, MANDATE_TICK, TERMS_VERSION, BOOKING_TERMS } from "@/lib/booking/terms";
 
 export const metadata: Metadata = { title: "Membership terms", alternates: { canonical: "/membership-terms" } };
 
@@ -11,7 +11,7 @@ export default function Terms() {
       <h1>Membership terms</h1>
       <p className="notice"><b>Draft</b> · Version {TERMS_VERSION}. This wording is pending legal review and is not yet in force.</p>
       <h2>Membership</h2>
-      <p>Membership is free. You give your name, email and mobile number, verified by SMS, and accept these terms with one tick: “{MANDATE_TICK}”</p>
+      <p>Membership is free. You give your name and mobile number, verified by SMS, and accept these terms by pressing the button beside this wording: “{MANDATE_CLICK}” In legal terms, that acceptance means: “{MANDATE_TICK}”</p>
       <h2>The mandate</h2>
       <ul>{MANDATE_POINTS.map((p) => <li key={p}>{p}</li>)}</ul>
       <h2>Booking terms</h2>

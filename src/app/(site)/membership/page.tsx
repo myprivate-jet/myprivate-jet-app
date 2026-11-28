@@ -5,6 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { MembershipCard } from "@/components/office/Membership";
 import { LEVELS, ASSURED_FEE, FEE_BACK } from "@/lib/membership";
 import { AssuredCard } from "@/components/AssuredCard";
+import { Compare } from "@/components/Compare";
 import { SITE } from "@/lib/site";
 import { currentMember } from "@/server/auth/session";
 
@@ -26,8 +27,10 @@ export default async function Membership() {
         ],
       }} />
       <Crumbs items={[["/", "Home"], ["/membership", "Membership"]]} />
-      <h1>Above the rest. By design.</h1>
-      <p className="lede">Someone will always fly for less. We are not that company. We do not run auctions or forward you the cheapest bid: we recommend one cabin, fly it with audited operators, and put one advisor on your side from the first question to landing. Two memberships. Both give you a firm price at once and no waiting; Assured adds a newer aircraft, guaranteed, at prices fixed all year.</p>
+      <h1>Free, or Assured.</h1>
+      <p className="lede">Everyone starts Private, free: a firm price at once, one tap to book, nothing to pay until confirmed. Assured is for those who fly often and want certainty every day of the year: a newer aircraft, guaranteed, at prices fixed all year.</p>
+      <Compare />
+      <h2>In detail</h2>
       <div className="levels">
         {(["private", "assured"] as const).map((k) => {
           const L = LEVELS[k];

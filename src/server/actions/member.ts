@@ -22,13 +22,14 @@ type Result<T = object> = ({ ok: true } & T) | { ok: false; error: string };
 
 const { members, profiles, verifications, bookings, passengers, payments, chatMessages, offers, operatorMessages } = schema;
 
+/**
+ * Two fields only: a name and a mobile. Email, passports and preferences are completed later, in the Office.
+ * The terms are accepted by pressing the button, with the wording shown right beside it (clickwrap).
+ */
 const joinSchema = z.object({
-  first: z.string().trim().min(1, "Please give your first and family name.").max(80),
-  last: z.string().trim().min(1, "Please give your first and family name.").max(80),
-  email: z.string().trim().email("Please check your email address.").max(200),
+  name: z.string().trim().min(2, "Please give your name.").max(160),
   cc: z.string().regex(/^\+\d{1,4}$/),
   phone: z.string().transform((v) => v.replace(/\D/g, "")).pipe(z.string().min(6, "Please check your mobile number.").max(14, "Please check your mobile number.")),
-  terms: z.literal("on", { message: "Please accept the Membership Terms to continue." }),
 });
 
 const mask = (e164: string) => `${e164.slice(0, e164.length - 9 > 0 ? e164.length - 9 : 3)} ••• ${e164.slice(-3)}`;
@@ -37,7 +38,10 @@ const mask = (e164: string) => `${e164.slice(0, e164.length - 9 > 0 ? e164.lengt
 export async function startMembership(_: unknown, form: FormData): Promise<Result<{ masked: string; simulated: boolean }>> {
   const parsed = joinSchema.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
-  const { first, last, email, cc, phone } = parsed.data;
+  const { name, cc, phone } = parsed.data;
+  const [first, ...rest] = name.split(/\s+/);
+  const last = rest.join(" ");
+  const email = "";
   const e164 = cc + phone.replace(/^0+/, "");
   const ip = (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
 
@@ -74,7 +78,8 @@ export async function confirmMembership(_: unknown, form: FormData): Promise<Res
   let memberId: string;
   if (existing) {
     memberId = existing.id;
-    await db().update(members).set({ firstName: p.first, lastName: p.last, email: p.email }).where(eq(members.id, memberId));
+    // Signing back in: keep what the member already gave us, update only the name they typed.
+    await db().update(members).set({ firstName: p.first, ...(p.last ? { lastName: p.last } : {}), ...(p.email ? { email: p.email } : {}) }).where(eq(members.id, memberId));
   } else {
     const [m] = await db()
       .insert(members)
@@ -142,7 +147,7 @@ export async function bookFlight(req: TripRequest): Promise<Result<{ ref: string
       ].filter(Boolean) as string[],
     })
     .returning();
-  await db().insert(passengers).values(Array.from({ length: b.pax }, (_, i) => ({ bookingId: b.id, seat: i + 1, fullName: i === 0 ? `${m.firstName} ${m.lastName}` : null })));
+  await db().insert(passengers).values(Array.from({ length: b.pax }, (_, i) => ({ bookingId: b.id, seat: i + 1, fullName: i === 0 ? `${m.firstName} ${m.lastName}`.trim() : null })));
   await db().insert(operatorMessages).values({
     bookingId: b.id, direction: "out", fromName: "MyPrivate-Jet Ops", toName: "Qualified operators", label: "Booked + 2 min",
     subject: `RFQ ${ref} · ${b.fromIcao}–${b.toIcao} · ${b.date} · ${b.pax} pax`,

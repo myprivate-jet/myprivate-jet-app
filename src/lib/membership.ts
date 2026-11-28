@@ -44,3 +44,12 @@ export const LEVELS = {
 } as const;
 
 export type Level = keyof typeof LEVELS;
+
+/** Private and Assured side by side, row by row: the one-glance answer for someone new. */
+export const COMPARE: [string, string, string][] = [
+  ["Cost", "Free", ASSURED_FEE.label],
+  ["Price", "Today's price, firm at once", "Fixed for 12 months, peak days too"],
+  ["Aircraft", "Any suitable jet in your cabin", "Under 7 years, or newly refurbished"],
+  ["Guarantee", "Subject to availability", "Guaranteed with 72 hours' notice (96 outside Europe)"],
+  ["If we fail", "You pay nothing", "Your whole year's fee back"],
+];

@@ -11,7 +11,7 @@ export const isLocale = (v: unknown): v is Locale => typeof v === "string" && (L
 
 const en = {
   tagline: "Private Aviation Office",
-  nav: { plan: "Plan a flight", standards: "Cabin standards", guides: "Guides", office: "Your Office", profile: "Profile", join: "Join or sign in" },
+  nav: { plan: "Plan a flight", standards: "Cabin standards", guides: "Guides", office: "Your Office", profile: "Profile", join: "Sign in" },
   heroQ: "One recommendation. One final price.",
   promise: [
     ["One final price", "All-inclusive. It never moves."],

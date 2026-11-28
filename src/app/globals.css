@@ -994,3 +994,28 @@ body{overflow-x:clip}
 .hero-sky+.q .prog{display:none}
 .oh{font-size:clamp(30px,6.5vw,48px)}
 .nextup .nu-t{font-size:clamp(20px,4.6vw,26px);line-height:1.25}
+
+/* =====================================================================
+   Zero friction 2026-11-28: one tap per question, the promise on every
+   screen, Private and Assured in one glance.
+   ===================================================================== */
+.calm{display:flex;gap:10px;align-items:baseline;margin:28px 0 0;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.calm::before{content:"";width:6px;height:6px;border-radius:50%;background:#5f9a6e;flex:none;transform:translateY(-1px)}
+.promise3{list-style:none;counter-reset:p;padding:0;margin:34px 0 0;border-top:1px solid var(--line)}
+.promise3 li{counter-increment:p;display:grid;grid-template-columns:28px 1fr;padding:15px 0;border-bottom:1px solid var(--line);font-size:14px;color:var(--muted)}
+.promise3 li::before{content:counter(p);font:300 16px var(--serif);color:var(--navy)}
+.promise3 b{color:var(--navy);font-weight:500}
+.vs{margin:26px 0 0;border:1px solid var(--line);background:var(--paper);font-size:13px}
+.vs-hd,.vs-rw{display:grid;grid-template-columns:minmax(84px,.7fr) 1fr 1fr}
+.vs-hd>span{padding:14px 12px 10px}
+.vs-hd b{display:block;font:400 14px/1.3 var(--serif);text-transform:uppercase;letter-spacing:.12em}
+.vs-hd small{font-size:11.5px;opacity:.75}
+.vs .as{background:color-mix(in srgb,var(--inv-bg) 7%,transparent)}
+.vs-hd .as{background:var(--inv-bg);color:var(--inv-fg)}
+.vs-rw>span{padding:11px 12px;border-top:1px solid var(--line);line-height:1.4}
+.vs-rw .k{color:var(--muted);font-size:10px;letter-spacing:.16em;text-transform:uppercase;padding-top:13px}
+.vs-you{margin:0;padding:12px 12px 14px;border-top:1px solid var(--line);color:var(--muted)}
+.vs-you b{color:var(--navy);font-weight:500}
+.vs-you a{color:var(--navy);margin-left:4px}
+.answer .vs{margin-top:22px}
+.clickwrap{margin-top:14px;line-height:1.5}

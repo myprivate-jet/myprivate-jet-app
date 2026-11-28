@@ -163,7 +163,7 @@ export async function sendBrief(ref: string) {
   await db().update(flightBriefs).set({ sentAt: new Date() }).where(eq(flightBriefs.bookingId, b.id));
   if (b.stage >= 6 && b.stage < 10) await db().update(bookings).set({ waitingOn: "Flight brief sent to client" }).where(eq(bookings.id, b.id));
   const [m] = await db().select().from(members).where(eq(members.id, b.memberId)).limit(1);
-  if (m && !m.isDemo) await sendEmail({ to: m.email, subject: `Your flight brief · ${ref}`, text: `Your flight brief for ${ref} is in your Private Office.` });
+  if (m && !m.isDemo && m.email) await sendEmail({ to: m.email, subject: `Your flight brief · ${ref}`, text: `Your flight brief for ${ref} is in your Private Office.` });
   await audit(s.email, "brief.sent", { bookingId: b.id });
   done();
 }

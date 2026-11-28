@@ -12,6 +12,10 @@ export const MANDATE_POINTS = [
   "You can withdraw the mandate at any time. Flights already booked continue.",
 ];
 
+/** Shown beside the join button: pressing it is the acceptance. */
+export const MANDATE_CLICK =
+  "By continuing you accept our Membership Terms: we book the aircraft and sign its charter agreement for you, only for the trip and price you confirm, and you pay nothing until it is confirmed.";
+
 export const MANDATE_TICK =
   "I accept the Membership Terms, including a mandate for MyPrivate-Jet to contract the flights I book and to sign their charter agreements on my behalf.";
 

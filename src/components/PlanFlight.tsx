@@ -2,9 +2,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AirportInput, type AirportHit } from "./AirportInput";
-import { AssuredCard } from "./AssuredCard";
+import { Compare } from "./Compare";
 import { DateCalendar } from "./DateCalendar";
-import { LEVELS } from "@/lib/membership";
 import { MembershipDialog } from "./MembershipDialog";
 import { openChat } from "./ChatWidget";
 import { ORDER, STANDARDS, type StandardId } from "@/lib/pricing/standards";
@@ -36,13 +35,20 @@ function Rich({ s }: { s: string }) {
   return <>{boldSegments(s).map((p, i) => (p.b ? <b key={i}>{p.t}</b> : <span key={i}>{p.t}</span>))}</>;
 }
 
+/** The three promises a first-time guest reads before the first question. */
+const PROMISE: [string, string][] = [
+  ["Your price, at once.", " Firm and all-inclusive. No quotes, no waiting, no haggling."],
+  ["Nothing to pay before it is certain.", " You pay only once your aircraft and crew are confirmed."],
+  ["Then, nothing to do.", " We arrange everything. You hear from us once more: your flight briefing."],
+];
+
 const QUESTIONS: Record<Exclude<Step, "answer">, string> = { to: "Where to?", from: "Flying from?", when: "When?", who: "How many of you?" };
 const QORDER: Exclude<Step, "answer">[] = ["to", "from", "when", "who"];
 const HINTS: Record<Exclude<Step, "answer">, string> = {
-  to: "Tap a place or type any city. Four taps to your price; no account needed to see it.",
-  from: "Then when, and how many of you. Your price follows at once.",
-  when: "Choose a day and a time of day. Then how many of you, and your price.",
-  who: "Tap the number. Your recommended cabin and price appear straight away.",
+  to: "A city or an airport. No account needed to see your price.",
+  from: "Then the day, and how many of you.",
+  when: "Tap a day. Any date, up to a year ahead.",
+  who: "Your aircraft and your firm price appear at once.",
 };
 
 /**
@@ -144,7 +150,7 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
   const fromShown = Boolean(from && (fromKnown || step !== "from"));
   if (fromShown) chips.push(["from", fromLabel]);
   if (to) chips.push(["to", fromShown ? `→ ${toLabel}` : `to ${toLabel}`]);
-  if (step === "who" || step === "answer") chips.push(["when", `${dayLabel(date)}, ${time}`]);
+  if (step === "who" || step === "answer") chips.push(["when", step === "answer" ? `${dayLabel(date)}, ${time}` : dayLabel(date)]);
   if (step === "answer") chips.push(["who", `${pax} ${pax === 1 ? "guest" : "guests"}`]);
 
   return (
@@ -212,18 +218,14 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
                   <>
                     <div className="choices when">
                       {quick.map(([d, l]) => (
-                        <button key={l} type="button" className={date === d ? "on" : ""} onClick={() => { setDate(d); setCal(false); }}>{l}<small>{dayLabel(d)}</small></button>
+                        <button key={l} type="button" className={date === d ? "on" : ""} onClick={() => { setDate(d); setCal(false); next("when"); }}>{l}<small>{dayLabel(d)}</small></button>
                       ))}
                       <button type="button" className={`other ${custom ? "on" : ""}`} aria-expanded={cal} onClick={() => setCal(!cal)}>{custom ? dayLabel(date) : "Another date"}<small>{cal ? "Close" : custom ? "Change" : "Any day, up to a year ahead"}</small></button>
                     </div>
-                    {cal && <DateCalendar value={date} min={iso(new Date())} onPick={(d) => { setDate(d); setCal(false); }} />}
+                    {cal && <DateCalendar value={date} min={iso(new Date())} onPick={(d) => { setDate(d); setCal(false); next("when"); }} />}
                   </>
                 );
               })()}
-              <div className="seg" role="radiogroup" aria-label="Time of departure">
-                {TIMES.map(([t, l]) => <button key={t} type="button" role="radio" aria-checked={time === t} className={time === t ? "on" : ""} onClick={() => setTime(t)}>{l}<small>{t}</small></button>)}
-              </div>
-              <button className="go" type="button" onClick={() => next("when")}>Continue</button>
             </>
           )}
 
@@ -236,12 +238,12 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
             </div>
           )}
 
+          {step !== "to" && <p className="calm">Seeing a price commits you to nothing. Nothing to pay until your aircraft is confirmed.</p>}
+
           {step === "to" && (
-            <div className="manifesto">
-              <p>Tell us where. We take care of everything else.</p>
-              <p className="m2">Not a marketplace, not an auction, never the cheapest bidder. One advisor, audited operators, and a price you can hold us to.</p>
-              <a className="so" href="/demo">See what members see</a>
-            </div>
+            <ol className="promise3" aria-label="Flying with us">
+              {PROMISE.map(([b, t]) => <li key={b}><b>{b}</b>{t}</li>)}
+            </ol>
           )}
         </section>
       )}
@@ -257,17 +259,17 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
               <div className="big">{money(shownPrice, q.trip.cur)}</div>
               <div className="final">
                 {q.trip.ret ? "Return" : "One way"} · all-inclusive{q.trip.route === "US" ? " · US taxes included" : ""}
-                {q.guarantee === "instant" ? " · price and aircraft guaranteed" : " · firm price, no waiting"}
+                {q.guarantee === "instant" ? " · aircraft guaranteed" : " · firm"}
               </div>
               <p className="why">{q.why}</p>
               <button className="go" type="button" onClick={confirm} disabled={booking}>{booking ? "One moment…" : "Book now"}</button>
-              <NextSteps items={q.guarantee === "instant"
-                ? ["Tap once. That is your booking, at this price.", "Your aircraft is guaranteed: we confirm it and the crew within 2 hours.", "You pay once it is confirmed. Your advisor handles everything else."]
-                : [member ? "Tap once. That is your booking, at this price." : "Tap once. First time only: your name and mobile, 30 seconds.", "Within 2 hours we confirm your aircraft and crew, from every suitable aircraft in this cabin.", "Nothing to pay until it is confirmed. If none can be, we upgrade you at no extra cost or release you, free."]} />
+              <NextSteps items={[
+                member ? "One tap books it, at this price." : "One tap books it. First time only: your name and mobile.",
+                q.guarantee === "instant" ? "Your guaranteed aircraft and crew, confirmed within 2 hours." : "We confirm your aircraft and crew within 2 hours.",
+                "Only then do you pay. If no aircraft can be confirmed, you pay nothing.",
+              ]} />
               <button className="talk" type="button" onClick={chat}>Ask your advisor first</button>
-              <p className="cmp">{q.tier === "assured"
-                ? <><b>Assured:</b> a newer aircraft{q.guarantee === "instant" ? ", guaranteed" : ", guaranteed with " + q.notice + " hours' notice"}, at a price fixed for 12 months, peak days included.</>
-                : <><b>Private:</b> today&apos;s price, any suitable aircraft, subject to availability. Assured guarantees a newer aircraft at a price fixed all year.</>}</p>
+              {q.tier === "assured" && q.guarantee !== "instant" && <p className="cmp">Inside {q.notice} hours your price stays firm; the aircraft is subject to availability.</p>}
             </div>
           ) : q.advisorStandard ? (
             <div className="card-a">
@@ -289,11 +291,12 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
           {q && (
             <>
               <div className="disc">
-                <button className="more" type="button" aria-expanded={adjust} onClick={() => setAdjust(!adjust)}>{adjust ? "Done" : `Change cabin or add extras${extras ? ` (${extras})` : ""}`}</button>
+                <button className="more" type="button" aria-expanded={adjust} onClick={() => setAdjust(!adjust)}>{adjust ? "Done" : `Other cabins, time or extras${extras ? ` (${extras})` : ""}`}</button>
                 <button className="more" type="button" aria-expanded={more} onClick={() => setMore(!more)}>{more ? "Hide details" : "Why this cabin"}</button>
               </div>
               {adjust && <div className="adjust">
               <div className="tweaks" aria-label="Anything special">
+                <label className="tw-sel on"><span className="visually">Wheels up</span><select value={time} onChange={(e) => setTime(e.target.value)}>{TIMES.map(([t, l]) => <option key={t} value={t}>{l} · {t}</option>)}</select></label>
                 <button type="button" aria-pressed={ret} className={ret ? "on" : ""} onClick={() => { setRet(!ret); }}>Return</button>
                 {ret && <label className="tw-date"><span className="visually">Return date</span><input type="date" value={rdate} min={date} onChange={(e) => e.target.value && setRdate(e.target.value)} /></label>}
                 <label className={`tw-sel ${bags !== "std" ? "on" : ""}`}><span className="visually">Luggage</span><select value={bags} onChange={(e) => setBags(e.target.value as Bags)}>{BAGS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label>
@@ -327,12 +330,7 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
             </>
           )}
 
-          {q && q.guarantee !== "instant" && q.tier !== "assured" && shownPrice && (
-            <a className="upsell" href="/membership">
-              <AssuredCard size="sm" />
-              <span className="up-t"><b>Become Assured</b><span>A newer aircraft, guaranteed. Your prices fixed for 12 months, peak days included. {LEVELS.assured.price}.</span></span>
-            </a>
-          )}
+          {q && q.tier !== "assured" && shownPrice && <Compare onPrice />}
           {q && <details className="terms bt mini-terms"><summary>Booking terms</summary><ol>{BOOKING_TERMS.map(([h, t]) => <li key={h}><b>{h}.</b> {t}</li>)}</ol><p className="fine">Draft for legal review.</p></details>}
           {err && q && <div className="err" role="alert">{err}</div>}
 

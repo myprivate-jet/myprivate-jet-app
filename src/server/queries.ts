@@ -54,7 +54,7 @@ export async function pipeline() {
   const all = await db().select().from(offers).where(inArray(offers.bookingId, views.map((v) => v.id).concat(["00000000-0000-0000-0000-000000000000"])));
   return views.map((v, i) => ({
     ...v,
-    client: `${rows[i].first.charAt(0)}. ${rows[i].last}`,
+    client: rows[i].last ? `${rows[i].first.charAt(0)}. ${rows[i].last}` : rows[i].first,
     chosenCost: all.find((o) => o.bookingId === v.id && o.status === "chosen")?.cost ?? null,
   }));
 }
