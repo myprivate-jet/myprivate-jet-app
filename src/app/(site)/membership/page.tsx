@@ -1,0 +1,62 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Crumbs } from "@/components/Crumbs";
+import { JsonLd } from "@/components/JsonLd";
+import { MembershipCard } from "@/components/office/Membership";
+import { LEVELS, ASSURED_FEE, FEE_BACK } from "@/lib/membership";
+import { AssuredCard } from "@/components/AssuredCard";
+import { Compare } from "@/components/Compare";
+import { SITE } from "@/lib/site";
+import { currentMember } from "@/server/auth/session";
+
+export const metadata: Metadata = {
+  title: "Membership: Private and Assured",
+  description: "Both levels give a firm price at once, booked in one tap. Private is free: today's price, any suitable aircraft, subject to availability. Assured guarantees newer aircraft and fixes prices for 12 months, any day, booked in one tap.",
+  alternates: { canonical: "/membership" },
+};
+
+export default async function Membership() {
+  const m = await currentMember();
+  return (
+    <div className="article wide">
+      <JsonLd data={{
+        "@context": "https://schema.org", "@type": "Service", name: "MyPrivate-Jet membership", provider: { "@id": `${SITE.url}/#org` },
+        offers: [
+          { "@type": "Offer", name: "Private membership", price: 0, priceCurrency: "EUR", description: LEVELS.private.line },
+          { "@type": "Offer", name: "Assured membership", price: ASSURED_FEE.amount, priceCurrency: ASSURED_FEE.currency, description: LEVELS.assured.line },
+        ],
+      }} />
+      <Crumbs items={[["/", "Home"], ["/membership", "Membership"]]} />
+      <h1>Free, or Assured.</h1>
+      <p className="lede">Everyone starts Private, free: a firm price at once, one tap to book, nothing to pay until confirmed. Assured is for those who fly often and want certainty every day of the year: a newer aircraft, guaranteed, at prices fixed all year.</p>
+      <Compare />
+      <h2>In detail</h2>
+      <div className="levels">
+        {(["private", "assured"] as const).map((k) => {
+          const L = LEVELS[k];
+          return (
+            <section key={k} className={`lvl ${k}`}>
+              {k === "assured" && <AssuredCard size="lg" holder={m ? `${m.firstName} ${m.lastName}` : undefined} />}
+              <div className="lvl-n">{L.name}</div>
+              <div className="lvl-p">{L.price}</div>
+              <p className="lvl-l">{L.line}</p>
+              <ul>{L.points.map((p) => <li key={p}>{p}</li>)}</ul>
+              {k === "private" ? (
+                <Link className="go ghost" href="/">{m ? "Plan a flight" : "Join free and plan a flight"}</Link>
+              ) : m ? (
+                m.tier === "assured" ? <p className="lvl-l"><b>You are an Assured member.</b></p> : <MembershipCard tier="private" requested={Boolean(m.assuredRequestedAt)} />
+              ) : (
+                <Link className="go" href="/office">Join, then become Assured</Link>
+              )}
+            </section>
+          );
+        })}
+      </div>
+      <h2>The fee-back promise</h2>
+      <p>{FEE_BACK.text}</p>
+      <h2>In one example</h2>
+      <p>Four guests, Geneva to Nice on a Friday in June. Both members see a firm price at once and book it with one tap. The Private member pays that day's price, which is higher on Grand Prix weekend, and we find the aircraft among every suitable aircraft in the cabin. The Assured member pays the price fixed for the year, peak weekend or not, in a newer aircraft that is guaranteed.</p>
+      <p className="fine">Membership Terms, including the fee-back promise, are pending legal review.</p>
+    </div>
+  );
+}
