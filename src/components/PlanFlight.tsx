@@ -160,7 +160,7 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
       {step === "to" && heading && !to && (
         <section className="hero-sky" aria-label="MyPrivate-Jet">
           <p className="hs-k">Private aviation, quietly done</p>
-          <p className="hs-t">Nothing to arrange.<br /><em>Only to arrive.</em></p>
+          <p className="hs-t">We think of everything.<br /><em>You simply fly.</em></p>
         </section>
       )}
 
