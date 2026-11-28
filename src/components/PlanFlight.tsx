@@ -157,6 +157,13 @@ export function PlanFlight({ member, initial, guestNote, heading = true }: { mem
         </nav>
       )}
 
+      {step === "to" && heading && !to && (
+        <section className="hero-sky" aria-label="MyPrivate-Jet">
+          <p className="hs-k">Private aviation, quietly done</p>
+          <p className="hs-t">Nothing to arrange.<br /><em>Only to arrive.</em></p>
+        </section>
+      )}
+
       {step !== "answer" && (
         <section className="q" aria-live="polite" key={step}>
           <div className="prog" aria-label={`Question ${QORDER.indexOf(step) + 1} of 4`}>

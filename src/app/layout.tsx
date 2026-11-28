@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, IBM_Plex_Mono, Inter, Inter_Tight } from "next/font/google";
+import { Cormorant_Garamond, IBM_Plex_Mono, Inter, Inter_Tight, Jost } from "next/font/google";
 import "./globals.css";
 import { SITE } from "@/lib/site";
 import { getDict } from "@/i18n/server";
@@ -9,7 +9,8 @@ import { JsonLd } from "@/components/JsonLd";
 
 const display = Inter_Tight({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-display", display: "swap" });
 const body = Inter({ subsets: ["latin"], variable: "--font-body", display: "swap" });
-const lux = Cormorant_Garamond({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-lux", display: "swap" });
+const lux = Cormorant_Garamond({ subsets: ["latin"], weight: ["400", "500"], style: ["normal", "italic"], variable: "--font-lux", display: "swap" });
+const jost = Jost({ subsets: ["latin"], weight: ["300", "400", "500"], variable: "--font-jost", display: "swap" });
 const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-mono", display: "swap" });
 
 export const metadata: Metadata = {
@@ -25,14 +26,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [{ media: "(prefers-color-scheme: light)", color: "#f3f0ea" }, { media: "(prefers-color-scheme: dark)", color: "#111110" }],
+  themeColor: [{ media: "(prefers-color-scheme: light)", color: "#f2ede2" }, { media: "(prefers-color-scheme: dark)", color: "#0b2219" }],
   viewportFit: "cover",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { locale } = await getDict();
   return (
-    <html lang={locale} dir={RTL.includes(locale) ? "rtl" : "ltr"} className={`${display.variable} ${lux.variable} ${body.variable} ${mono.variable}`}>
+    <html lang={locale} dir={RTL.includes(locale) ? "rtl" : "ltr"} className={`${display.variable} ${lux.variable} ${jost.variable} ${body.variable} ${mono.variable}`}>
       <body>
         <JsonLd
           data={{

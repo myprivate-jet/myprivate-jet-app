@@ -944,3 +944,53 @@ footer,footer a{font-size:12px;color:var(--muted)}
 .cal-g button.on{background:var(--navy);color:var(--ivory)}
 .cal-g button{aspect-ratio:auto;height:clamp(40px,11vw,52px)}
 .cal{max-width:100%}
+
+/* =====================================================================
+   Riviera 2026-11-28 (Pascal's choice). Deep racing green and cream,
+   a clear day above the clouds, a light geometric sans in spaced
+   capitals, italic serif accents. Assured is the green page.
+   ===================================================================== */
+:root{
+  --ivory:#f2ede2; --paper:#faf7f0; --navy:#0f2e23; --ink:#14332a; --muted:#5d6b63; --line:#d4d6c8;
+  --gold:#5d6b63; --gold-soft:#e6e6d8; --quiet:#e6e6d8;
+  --inv-bg:#10372a; --inv-fg:#f2ede2; --inv-mute:#9fb3a8; --inv-line:#2b5243;
+  --serif:var(--font-jost),"Jost",Futura,sans-serif; --accent:var(--font-lux),"Cormorant Garamond",Garamond,serif;
+  --body:var(--font-jost),"Jost",Futura,sans-serif;
+  --cap:400 11px/1.3 var(--body); --track:.24em;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ivory:#0b2219; --paper:#10372a; --navy:#f2ede2; --ink:#e9e6dc; --muted:#9fb3a8; --line:#24493c;
+  --gold:#9fb3a8; --gold-soft:#143f31; --quiet:#143f31;
+  --inv-bg:#f2ede2; --inv-fg:#0f2e23; --inv-mute:#5d6b63; --inv-line:#d4d6c8}}
+:root[data-theme="dark"]{
+  --ivory:#0b2219; --paper:#10372a; --navy:#f2ede2; --ink:#e9e6dc; --muted:#9fb3a8; --line:#24493c;
+  --gold:#9fb3a8; --gold-soft:#143f31; --quiet:#143f31;
+  --inv-bg:#f2ede2; --inv-fg:#0f2e23; --inv-mute:#5d6b63; --inv-line:#d4d6c8}
+body{font-family:var(--body);font-weight:400}
+.qh{font:300 clamp(40px,8vw,68px)/1.02 var(--serif);letter-spacing:.08em;text-transform:uppercase}
+.oh,main h1,.page h1,.prose h1,.article h1{font-family:var(--serif);font-weight:300;letter-spacing:.06em;text-transform:uppercase;line-height:1.08}
+main h2,.prose h2,.article h2,.nextup .nu-t{font-family:var(--serif);font-weight:300;letter-spacing:.06em;text-transform:uppercase}
+.card-a .std,.lvl-p,.upsell b,.manifesto p:first-child,.fl .hd b,.fl .pr{font-family:var(--serif);font-weight:300;letter-spacing:.06em}
+.card-a .std,.manifesto p:first-child,.upsell b{text-transform:uppercase}
+.card-a .big{font:300 clamp(62px,14vw,104px)/1 var(--serif);letter-spacing:-.005em}
+.choices button,.choices .pickdate,.seg button,.others button .n{font-family:var(--serif);font-weight:300;letter-spacing:.1em;text-transform:uppercase;font-size:15px}
+.big-in input{font:300 clamp(22px,5vw,30px)/1.2 var(--serif);letter-spacing:.08em}
+.pad button,.pad .more-pax,.cal-g button,.cal-h span{font-family:var(--serif);font-weight:300}
+.next li span,.card-a .next li span{font-family:var(--serif);font-weight:300}
+.brand{font-family:var(--body);font-weight:400}
+.go,.btn{font-family:var(--body);font-weight:400;letter-spacing:.26em}
+em,.it{font-family:var(--accent);font-style:italic;font-weight:400;letter-spacing:0;text-transform:none}
+.acard{background:#0c2a20 url("/img/leatherGreen.jpg") center/cover;color:#efe9de}
+.card-a.is-assured,.lvl.assured,.nextup{background-image:url("/img/leatherGreen.jpg");background-size:cover;background-blend-mode:multiply}
+
+/* The first screen: a clear day above the clouds, one line, then "Where to?" */
+.hero-sky{position:relative;margin:-8px calc(50% - 50vw) 34px;padding:clamp(70px,16vh,150px) max(24px,calc(50vw - 300px)) 40px;
+  background:linear-gradient(180deg,rgba(16,55,42,0) 35%,rgba(16,55,42,.6) 82%,#10372a 100%),url("/img/day.jpg") center 42%/cover;color:#fff;min-height:min(62vh,560px);display:flex;flex-direction:column;justify-content:flex-end}
+.hs-k{font:var(--cap);letter-spacing:var(--track);text-transform:uppercase;opacity:.9;margin:0 0 14px}
+.hs-t{font:300 clamp(34px,7vw,60px)/1.08 var(--serif);letter-spacing:.07em;text-transform:uppercase;margin:0}
+.hs-t em{display:inline-block;margin-top:6px;font-size:1.05em;text-transform:none;letter-spacing:0}
+body{overflow-x:clip}
+.ask:has(.hero-sky){padding-top:0}
+.hero-sky+.q .prog{display:none}
+.oh{font-size:clamp(30px,6.5vw,48px)}
+.nextup .nu-t{font-size:clamp(20px,4.6vw,26px);line-height:1.25}
